@@ -4,3 +4,5 @@ config
 *.xlsx
 *.ipynb
 AgenteFinanceiro
+old_env.txt
+old
