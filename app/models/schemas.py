@@ -1,7 +1,9 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class ResearchRequest(BaseModel):
     query: str
+    chat_history: Optional[str] = None
 
 class ResearchResponse(BaseModel):
     topic: str

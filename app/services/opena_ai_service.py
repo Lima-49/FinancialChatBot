@@ -29,11 +29,10 @@ tools = [search_tool, wiki_tool, save_tool]
 agent = create_tool_calling_agent(llm=llm, prompt=prompt, tools=tools)
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, return_intermediate_steps=True)
 
-def run_research(query: str) -> ResearchResponse:
-    raw_response = agent_executor.invoke({"query": query})
+def run_research(query: str, formatted_history: list) -> ResearchResponse:
+    raw_response = agent_executor.invoke({"query": query, "chat_history": formatted_history})
     try:
-        output_dict = json.loads(raw_response["output"])
-        return parser.parse(output_dict)
+        return parser.parse(raw_response["output"])
     except Exception as e:
         print(f"Error parsing response: {e}")
         return None     
