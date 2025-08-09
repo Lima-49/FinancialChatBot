@@ -1,0 +1,103 @@
+Unsupported message type: <class 'app.models.schemas.Message'>
+For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/MESSAGE_COERCION_FAILURE 
+Traceback (most recent call last):
+  File "C:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\app\api\endpoints.py", line 13, in research
+    return run_research(request.query,request.chat_history)
+  File "C:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\app\services\opena_ai_service.py", line 33, in run_research
+    raw_response = agent_executor.invoke({"query": query, "chat_history": formatted_history})
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\chains\base.py", line 170, in invoke
+    raise e
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\chains\base.py", line 160, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1624, in _call
+    next_step_output = self._take_next_step(
+        name_to_tool_map,
+    ...<3 lines>...
+        run_manager=run_manager,
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1332, in _take_next_step
+    for a in self._iter_next_step(
+             ~~~~~~~~~~~~~~~~~~~~^
+        name_to_tool_map,
+        ^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        run_manager,
+        ^^^^^^^^^^^^
+    )
+    ^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1358, in _iter_next_step
+    output = self._action_agent.plan(
+        intermediate_steps,
+        callbacks=run_manager.get_child() if run_manager else None,
+        **inputs,
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 581, in plan
+    for chunk in self.runnable.stream(inputs, config={"callbacks": callbacks}):
+                 ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3437, in stream
+    yield from self.transform(iter([input]), config, **kwargs)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3423, in transform
+    yield from self._transform_stream_with_config(
+    ...<4 lines>...
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2214, in _transform_stream_with_config
+    chunk: Output = context.run(next, iterator)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3385, in _transform
+    yield from final_pipeline
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 1428, in transform
+    for ichunk in input:
+                  ^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5650, in transform
+    yield from self.bound.transform(
+    ...<3 lines>...
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 1428, in transform
+    for ichunk in input:
+                  ^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 1446, in transform
+    yield from self.stream(final, config, **kwargs)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 1014, in stream
+    yield self.invoke(input, config, **kwargs)
+          ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 216, in invoke
+    return self._call_with_config(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        self._format_prompt_with_error_handling,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        serialized=self._serialized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 1939, in _call_with_config
+    context.run(
+    ~~~~~~~~~~~^
+        call_func_with_variable_args,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ),
+    ^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 429, in call_func_with_variable_args
+    return func(input, **kwargs)  # type: ignore[call-arg]
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 190, in _format_prompt_with_error_handling
+    return self.format_prompt(**inner_input_)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\prompts\chat.py", line 727, in format_prompt
+    messages = self.format_messages(**kwargs)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\prompts\chat.py", line 1188, in format_messages
+    message = message_template.format_messages(**kwargs)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\prompts\chat.py", line 184, in format_messages
+    value = convert_to_messages(value)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\messages\utils.py", line 367, in convert_to_messages
+    return [_convert_to_message(m) for m in messages]
+            ~~~~~~~~~~~~~~~~~~~^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\messages\utils.py", line 346, in _convert_to_message
+    raise NotImplementedError(msg)
+NotImplementedError: Unsupported message type: <class 'app.models.schemas.Message'>
+For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/MESSAGE_COERCION_FAILURE 
+
+---
