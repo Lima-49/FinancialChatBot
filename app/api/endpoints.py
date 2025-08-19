@@ -1,8 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.models.schemas import ResearchRequest, ResearchResponse, convert_history
 from app.services.opena_ai_service import run_research
-from app.services.ollama_service import run_ollama_research
-from app.core.security import verify_api_key
 from app.core.config import log_error_to_file
 
 router = APIRouter()
