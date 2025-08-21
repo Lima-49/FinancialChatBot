@@ -24,3 +24,17 @@ class ResearchResponse(BaseModel):
     summary: str
     sources: list[str]
     tools_used: list[str]
+
+class InsertRequest(BaseModel):
+    query: str
+    chat_history: Optional[List[Message]] = None
+
+class InsertResponse(BaseModel):
+    data: str
+    categoria: str
+    descricao: str
+    banco: int
+    metodo: int
+    valor: float
+    summary: str
+

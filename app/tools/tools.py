@@ -4,7 +4,6 @@ import pandas as pd
 import json
 from datetime import datetime
 
-
 def get_data_from_bigquery(query: str) -> pd.DataFrame:
     client = get_bigquery_client()
     query_job = client.query("SELECT * FROM farmbot-436900.CONTROLE_FINANCEIRO.HISTORICO_FINANCEIRO")
