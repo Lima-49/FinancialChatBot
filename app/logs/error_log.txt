@@ -1,0 +1,338 @@
+2025-08-21 17:30:40,195 [ERROR] registry.ollama.ai/library/llama2:latest does not support tools (status code: 400)
+Traceback (most recent call last):
+  File "C:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\app\api\endpoints.py", line 23, in research
+    return research_service.run(request.query, formatted_history)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\app\services\ollama_service.py", line 29, in run
+    raw_response = self.agent_executor.invoke({"query": query, "chat_history": chat_history})
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\chains\base.py", line 170, in invoke
+    raise e
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\chains\base.py", line 160, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1624, in _call
+    next_step_output = self._take_next_step(
+        name_to_tool_map,
+    ...<3 lines>...
+        run_manager=run_manager,
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1332, in _take_next_step
+    for a in self._iter_next_step(
+             ~~~~~~~~~~~~~~~~~~~~^
+        name_to_tool_map,
+        ^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        run_manager,
+        ^^^^^^^^^^^^
+    )
+    ^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1358, in _iter_next_step
+    output = self._action_agent.plan(
+        intermediate_steps,
+        callbacks=run_manager.get_child() if run_manager else None,
+        **inputs,
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 581, in plan
+    for chunk in self.runnable.stream(inputs, config={"callbacks": callbacks}):
+                 ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3437, in stream
+    yield from self.transform(iter([input]), config, **kwargs)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3423, in transform
+    yield from self._transform_stream_with_config(
+    ...<4 lines>...
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2214, in _transform_stream_with_config
+    chunk: Output = context.run(next, iterator)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3385, in _transform
+    yield from final_pipeline
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 1428, in transform
+    for ichunk in input:
+                  ^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5650, in transform
+    yield from self.bound.transform(
+    ...<3 lines>...
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 1446, in transform
+    yield from self.stream(final, config, **kwargs)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 522, in stream
+    for chunk in self._stream(input_messages, stop=stop, **kwargs):
+                 ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_ollama\chat_models.py", line 902, in _stream
+    for chunk in self._iterate_over_stream(messages, stop, **kwargs):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_ollama\chat_models.py", line 841, in _iterate_over_stream
+    for stream_resp in self._create_chat_stream(messages, stop, **kwargs):
+                       ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_ollama\chat_models.py", line 740, in _create_chat_stream
+    yield from self._client.chat(**chat_params)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\ollama\_client.py", line 170, in inner
+    raise ResponseError(e.response.text, e.response.status_code) from None
+ollama._types.ResponseError: registry.ollama.ai/library/llama2:latest does not support tools (status code: 400)
+2025-08-21 17:37:11,563 [ERROR] registry.ollama.ai/library/llama3:latest does not support tools (status code: 400)
+Traceback (most recent call last):
+  File "C:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\app\api\endpoints.py", line 23, in research
+    return research_service.run(request.query, formatted_history)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\app\services\ollama_service.py", line 29, in run
+    raw_response = self.agent_executor.invoke({"query": query, "chat_history": chat_history})
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\chains\base.py", line 170, in invoke
+    raise e
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\chains\base.py", line 160, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1624, in _call
+    next_step_output = self._take_next_step(
+        name_to_tool_map,
+    ...<3 lines>...
+        run_manager=run_manager,
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1332, in _take_next_step
+    for a in self._iter_next_step(
+             ~~~~~~~~~~~~~~~~~~~~^
+        name_to_tool_map,
+        ^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        run_manager,
+        ^^^^^^^^^^^^
+    )
+    ^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1358, in _iter_next_step
+    output = self._action_agent.plan(
+        intermediate_steps,
+        callbacks=run_manager.get_child() if run_manager else None,
+        **inputs,
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 581, in plan
+    for chunk in self.runnable.stream(inputs, config={"callbacks": callbacks}):
+                 ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3437, in stream
+    yield from self.transform(iter([input]), config, **kwargs)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3423, in transform
+    yield from self._transform_stream_with_config(
+    ...<4 lines>...
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2214, in _transform_stream_with_config
+    chunk: Output = context.run(next, iterator)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3385, in _transform
+    yield from final_pipeline
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 1428, in transform
+    for ichunk in input:
+                  ^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5650, in transform
+    yield from self.bound.transform(
+    ...<3 lines>...
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 1446, in transform
+    yield from self.stream(final, config, **kwargs)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 522, in stream
+    for chunk in self._stream(input_messages, stop=stop, **kwargs):
+                 ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_ollama\chat_models.py", line 902, in _stream
+    for chunk in self._iterate_over_stream(messages, stop, **kwargs):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_ollama\chat_models.py", line 841, in _iterate_over_stream
+    for stream_resp in self._create_chat_stream(messages, stop, **kwargs):
+                       ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_ollama\chat_models.py", line 740, in _create_chat_stream
+    yield from self._client.chat(**chat_params)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\ollama\_client.py", line 170, in inner
+    raise ResponseError(e.response.text, e.response.status_code) from None
+ollama._types.ResponseError: registry.ollama.ai/library/llama3:latest does not support tools (status code: 400)
+2025-08-21 17:50:21,018 [ERROR] model requires more system memory (11.5 GiB) than is available (9.2 GiB) (status code: 500)
+Traceback (most recent call last):
+  File "C:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\app\api\endpoints.py", line 23, in research
+    return research_service.run(request.query, formatted_history)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\app\services\ollama_service.py", line 29, in run
+    raw_response = self.agent_executor.invoke({"query": query, "chat_history": chat_history})
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\chains\base.py", line 170, in invoke
+    raise e
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\chains\base.py", line 160, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1624, in _call
+    next_step_output = self._take_next_step(
+        name_to_tool_map,
+    ...<3 lines>...
+        run_manager=run_manager,
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1332, in _take_next_step
+    for a in self._iter_next_step(
+             ~~~~~~~~~~~~~~~~~~~~^
+        name_to_tool_map,
+        ^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        run_manager,
+        ^^^^^^^^^^^^
+    )
+    ^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1358, in _iter_next_step
+    output = self._action_agent.plan(
+        intermediate_steps,
+        callbacks=run_manager.get_child() if run_manager else None,
+        **inputs,
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 581, in plan
+    for chunk in self.runnable.stream(inputs, config={"callbacks": callbacks}):
+                 ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3437, in stream
+    yield from self.transform(iter([input]), config, **kwargs)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3423, in transform
+    yield from self._transform_stream_with_config(
+    ...<4 lines>...
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2214, in _transform_stream_with_config
+    chunk: Output = context.run(next, iterator)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3385, in _transform
+    yield from final_pipeline
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 1428, in transform
+    for ichunk in input:
+                  ^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5650, in transform
+    yield from self.bound.transform(
+    ...<3 lines>...
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 1446, in transform
+    yield from self.stream(final, config, **kwargs)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 522, in stream
+    for chunk in self._stream(input_messages, stop=stop, **kwargs):
+                 ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_ollama\chat_models.py", line 902, in _stream
+    for chunk in self._iterate_over_stream(messages, stop, **kwargs):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_ollama\chat_models.py", line 841, in _iterate_over_stream
+    for stream_resp in self._create_chat_stream(messages, stop, **kwargs):
+                       ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_ollama\chat_models.py", line 740, in _create_chat_stream
+    yield from self._client.chat(**chat_params)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\ollama\_client.py", line 170, in inner
+    raise ResponseError(e.response.text, e.response.status_code) from None
+ollama._types.ResponseError: model requires more system memory (11.5 GiB) than is available (9.2 GiB) (status code: 500)
+2025-08-21 17:57:36,613 [ERROR] registry.ollama.ai/library/deepseek-r1:latest does not support tools (status code: 400)
+Traceback (most recent call last):
+  File "C:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\app\api\endpoints.py", line 23, in research
+    return research_service.run(request.query, formatted_history)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\app\services\ollama_service.py", line 29, in run
+    raw_response = self.agent_executor.invoke({"query": query, "chat_history": chat_history})
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\chains\base.py", line 170, in invoke
+    raise e
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\chains\base.py", line 160, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1624, in _call
+    next_step_output = self._take_next_step(
+        name_to_tool_map,
+    ...<3 lines>...
+        run_manager=run_manager,
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1332, in _take_next_step
+    for a in self._iter_next_step(
+             ~~~~~~~~~~~~~~~~~~~~^
+        name_to_tool_map,
+        ^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        run_manager,
+        ^^^^^^^^^^^^
+    )
+    ^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1358, in _iter_next_step
+    output = self._action_agent.plan(
+        intermediate_steps,
+        callbacks=run_manager.get_child() if run_manager else None,
+        **inputs,
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 581, in plan
+    for chunk in self.runnable.stream(inputs, config={"callbacks": callbacks}):
+                 ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3437, in stream
+    yield from self.transform(iter([input]), config, **kwargs)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3423, in transform
+    yield from self._transform_stream_with_config(
+    ...<4 lines>...
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2214, in _transform_stream_with_config
+    chunk: Output = context.run(next, iterator)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3385, in _transform
+    yield from final_pipeline
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 1428, in transform
+    for ichunk in input:
+                  ^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5650, in transform
+    yield from self.bound.transform(
+    ...<3 lines>...
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 1446, in transform
+    yield from self.stream(final, config, **kwargs)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 522, in stream
+    for chunk in self._stream(input_messages, stop=stop, **kwargs):
+                 ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_ollama\chat_models.py", line 902, in _stream
+    for chunk in self._iterate_over_stream(messages, stop, **kwargs):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_ollama\chat_models.py", line 841, in _iterate_over_stream
+    for stream_resp in self._create_chat_stream(messages, stop, **kwargs):
+                       ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_ollama\chat_models.py", line 740, in _create_chat_stream
+    yield from self._client.chat(**chat_params)
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\ollama\_client.py", line 170, in inner
+    raise ResponseError(e.response.text, e.response.status_code) from None
+ollama._types.ResponseError: registry.ollama.ai/library/deepseek-r1:latest does not support tools (status code: 400)
+2025-08-21 20:08:23,155 [ERROR] Too many arguments to single-input tool GetCurrentDateTime.
+                Consider using StructuredTool instead. Args: []
+Traceback (most recent call last):
+  File "C:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\app\api\endpoints.py", line 23, in research
+    result = research_service.run(request.query, formatted_history)
+  File "C:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\app\services\ollama_service.py", line 29, in run
+    raw_response = self.agent_executor.invoke({"query": query, "chat_history": chat_history})
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\chains\base.py", line 170, in invoke
+    raise e
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\chains\base.py", line 160, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1624, in _call
+    next_step_output = self._take_next_step(
+        name_to_tool_map,
+    ...<3 lines>...
+        run_manager=run_manager,
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1332, in _take_next_step
+    for a in self._iter_next_step(
+             ~~~~~~~~~~~~~~~~~~~~^
+        name_to_tool_map,
+        ^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        run_manager,
+        ^^^^^^^^^^^^
+    )
+    ^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1415, in _iter_next_step
+    yield self._perform_agent_action(
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        name_to_tool_map, color_mapping, agent_action, run_manager
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain\agents\agent.py", line 1437, in _perform_agent_action
+    observation = tool.run(
+        agent_action.tool_input,
+    ...<3 lines>...
+        **tool_run_kwargs,
+    )
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\tools\base.py", line 883, in run
+    raise error_to_raise
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\tools\base.py", line 845, in run
+    tool_args, tool_kwargs = self._to_args_and_kwargs(
+                             ~~~~~~~~~~~~~~~~~~~~~~~~^
+        tool_input, tool_call_id
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\langchain_core\tools\simple.py", line 89, in _to_args_and_kwargs
+    raise ToolException(msg)
+langchain_core.tools.base.ToolException: Too many arguments to single-input tool GetCurrentDateTime.
+                Consider using StructuredTool instead. Args: []

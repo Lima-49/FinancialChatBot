@@ -1,0 +1,11 @@
+### TODO
+- Criar uma maneira de salvar configurações de limites e cartoes no front
+(como na planilha Financiero pessoal)
+
+- Criar as novas tabelas
+
+- Criar jobs de notificçãoes quando atingir limite, ou quando estiver perto de pagar uma conta
+
+- Criar tools para ver quanto ainda pode gastar e quanto foi gasto por categoria (como na planilha finnanceiro pessoal)
+
+- Criar tool para ver quando deve ser guardado para pagar as contas quando receber o salario
