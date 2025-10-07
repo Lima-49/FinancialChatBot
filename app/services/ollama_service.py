@@ -2,14 +2,14 @@ from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain.agents import create_tool_calling_agent, AgentExecutor
-from app.tools.tools import gcp_tool, insert_gcp_tool, datetime_tool
+from app.tools.tools import gcp_tool, insert_gcp_tool, datetime_tool, pdf_extract_tool, pdf_process_and_insert_tool
 
 class OllamaService:
     def __init__(self, chat_prompt, parser):
         self.llm = ChatOllama(model="llama3.1")
         self.chat_prompt = chat_prompt
         self.parser = PydanticOutputParser(pydantic_object=parser)
-        self.tools = [gcp_tool, insert_gcp_tool, datetime_tool]
+        self.tools = [gcp_tool, insert_gcp_tool, datetime_tool, pdf_extract_tool, pdf_process_and_insert_tool]
         self.prompt = self.init_prompt()
         agent = create_tool_calling_agent(llm=self.llm, prompt=self.prompt, tools=self.tools)
         self.agent_executor = AgentExecutor(agent=agent, tools=self.tools, verbose=True, return_intermediate_steps=True)
