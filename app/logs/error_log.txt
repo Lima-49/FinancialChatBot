@@ -336,3 +336,142 @@ Traceback (most recent call last):
     raise ToolException(msg)
 langchain_core.tools.base.ToolException: Too many arguments to single-input tool GetCurrentDateTime.
                 Consider using StructuredTool instead. Args: []
+2025-10-08 13:46:10,838 [ERROR] An unexpected error occurred while opening the document Fatura_VISA_100485260563_14-10-2025.pdf
+Traceback (most recent call last):
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 152, in __init__
+    self._init_doc(backend, path_or_stream)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 188, in _init_doc
+    self._backend = backend(self, path_or_stream=path_or_stream)
+                    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\backend\docling_parse_v4_backend.py", line 196, in __init__
+    self._pdoc = pdfium.PdfDocument(self.path_or_stream)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 78, in __init__
+    self.raw, to_hold, to_close = _open_pdf(self._input, self._password, self._autoclose)
+                                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 678, in _open_pdf
+    raise PdfiumError(f"Failed to load document (PDFium: {pdfium_i.ErrorToStr.get(err_code)}).")
+pypdfium2._helpers.misc.PdfiumError: Failed to load document (PDFium: Incorrect password error).
+2025-10-08 14:01:19,258 [ERROR] An unexpected error occurred while opening the document Fatura_VISA_100485260563_14-10-2025.pdf
+Traceback (most recent call last):
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 152, in __init__
+    self._init_doc(backend, path_or_stream)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 188, in _init_doc
+    self._backend = backend(self, path_or_stream=path_or_stream)
+                    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\backend\docling_parse_v4_backend.py", line 196, in __init__
+    self._pdoc = pdfium.PdfDocument(self.path_or_stream)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 78, in __init__
+    self.raw, to_hold, to_close = _open_pdf(self._input, self._password, self._autoclose)
+                                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 678, in _open_pdf
+    raise PdfiumError(f"Failed to load document (PDFium: {pdfium_i.ErrorToStr.get(err_code)}).")
+pypdfium2._helpers.misc.PdfiumError: Failed to load document (PDFium: Incorrect password error).
+2025-10-08 14:01:24,867 [ERROR] An unexpected error occurred while opening the document Fatura_VISA_100485260563_14-10-2025.pdf
+Traceback (most recent call last):
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 152, in __init__
+    self._init_doc(backend, path_or_stream)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 188, in _init_doc
+    self._backend = backend(self, path_or_stream=path_or_stream)
+                    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\backend\docling_parse_v4_backend.py", line 196, in __init__
+    self._pdoc = pdfium.PdfDocument(self.path_or_stream)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 78, in __init__
+    self.raw, to_hold, to_close = _open_pdf(self._input, self._password, self._autoclose)
+                                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 678, in _open_pdf
+    raise PdfiumError(f"Failed to load document (PDFium: {pdfium_i.ErrorToStr.get(err_code)}).")
+pypdfium2._helpers.misc.PdfiumError: Failed to load document (PDFium: Incorrect password error).
+2025-10-08 14:02:06,659 [ERROR] An unexpected error occurred while opening the document Fatura_VISA_100485260563_14-10-2025.pdf
+Traceback (most recent call last):
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 152, in __init__
+    self._init_doc(backend, path_or_stream)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 188, in _init_doc
+    self._backend = backend(self, path_or_stream=path_or_stream)
+                    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\backend\docling_parse_v4_backend.py", line 196, in __init__
+    self._pdoc = pdfium.PdfDocument(self.path_or_stream)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 78, in __init__
+    self.raw, to_hold, to_close = _open_pdf(self._input, self._password, self._autoclose)
+                                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 678, in _open_pdf
+    raise PdfiumError(f"Failed to load document (PDFium: {pdfium_i.ErrorToStr.get(err_code)}).")
+pypdfium2._helpers.misc.PdfiumError: Failed to load document (PDFium: Incorrect password error).
+2025-10-08 14:02:38,305 [ERROR] An unexpected error occurred while opening the document Fatura_VISA_100485260563_14-10-2025.pdf
+Traceback (most recent call last):
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 152, in __init__
+    self._init_doc(backend, path_or_stream)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 188, in _init_doc
+    self._backend = backend(self, path_or_stream=path_or_stream)
+                    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\backend\docling_parse_v4_backend.py", line 196, in __init__
+    self._pdoc = pdfium.PdfDocument(self.path_or_stream)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 78, in __init__
+    self.raw, to_hold, to_close = _open_pdf(self._input, self._password, self._autoclose)
+                                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 678, in _open_pdf
+    raise PdfiumError(f"Failed to load document (PDFium: {pdfium_i.ErrorToStr.get(err_code)}).")
+pypdfium2._helpers.misc.PdfiumError: Failed to load document (PDFium: Incorrect password error).
+2025-10-08 14:03:20,614 [ERROR] An unexpected error occurred while opening the document Fatura_VISA_100485260563_14-10-2025.pdf
+Traceback (most recent call last):
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 152, in __init__
+    self._init_doc(backend, path_or_stream)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 188, in _init_doc
+    self._backend = backend(self, path_or_stream=path_or_stream)
+                    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\backend\docling_parse_v4_backend.py", line 196, in __init__
+    self._pdoc = pdfium.PdfDocument(self.path_or_stream)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 78, in __init__
+    self.raw, to_hold, to_close = _open_pdf(self._input, self._password, self._autoclose)
+                                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 678, in _open_pdf
+    raise PdfiumError(f"Failed to load document (PDFium: {pdfium_i.ErrorToStr.get(err_code)}).")
+pypdfium2._helpers.misc.PdfiumError: Failed to load document (PDFium: Incorrect password error).
+2025-10-08 14:03:52,537 [WARNING] Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2025-10-08 14:03:57,399 [WARNING] Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2025-10-08 14:03:57,409 [WARNING] Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2025-10-08 14:06:00,988 [ERROR] An unexpected error occurred while opening the document Fatura_VISA_100485260563_14-10-2025.pdf
+Traceback (most recent call last):
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 152, in __init__
+    self._init_doc(backend, path_or_stream)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 188, in _init_doc
+    self._backend = backend(self, path_or_stream=path_or_stream)
+                    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\backend\docling_parse_v4_backend.py", line 196, in __init__
+    self._pdoc = pdfium.PdfDocument(self.path_or_stream)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 78, in __init__
+    self.raw, to_hold, to_close = _open_pdf(self._input, self._password, self._autoclose)
+                                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 678, in _open_pdf
+    raise PdfiumError(f"Failed to load document (PDFium: {pdfium_i.ErrorToStr.get(err_code)}).")
+pypdfium2._helpers.misc.PdfiumError: Failed to load document (PDFium: Incorrect password error).
+2025-10-08 14:07:10,022 [ERROR] An unexpected error occurred while opening the document Fatura_VISA_100485260563_14-10-2025.pdf
+Traceback (most recent call last):
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 152, in __init__
+    self._init_doc(backend, path_or_stream)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\datamodel\document.py", line 188, in _init_doc
+    self._backend = backend(self, path_or_stream=path_or_stream)
+                    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\docling\backend\docling_parse_v4_backend.py", line 196, in __init__
+    self._pdoc = pdfium.PdfDocument(self.path_or_stream)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 78, in __init__
+    self.raw, to_hold, to_close = _open_pdf(self._input, self._password, self._autoclose)
+                                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\vitor\OneDrive\Documentos\Projects\ControleFinanceiro\.venv\Lib\site-packages\pypdfium2\_helpers\document.py", line 678, in _open_pdf
+    raise PdfiumError(f"Failed to load document (PDFium: {pdfium_i.ErrorToStr.get(err_code)}).")
+pypdfium2._helpers.misc.PdfiumError: Failed to load document (PDFium: Incorrect password error).

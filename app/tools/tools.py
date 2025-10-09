@@ -42,12 +42,13 @@ def get_current_datetime(_: str = "") -> str:
     now = datetime.now()
     return f"Data atual: {now.strftime('%Y-%m-%d')}\nHorário atual: {now.strftime('%H:%M:%S')}"
 
-def extract_bank_statement_from_pdf(pdf_path: str) -> str:
+def extract_bank_statement_from_pdf(pdf_path: str, password: str = None) -> str:
     """
     Extrai texto de um PDF de fatura bancária e retorna dados estruturados em JSON.
     
     Args:
         pdf_path (str): Caminho para o arquivo PDF
+        password (str, optional): Senha para PDFs protegidos
         
     Returns:
         str: JSON com as transações extraídas ou mensagem de erro
@@ -55,6 +56,30 @@ def extract_bank_statement_from_pdf(pdf_path: str) -> str:
     try:
         # Abre o PDF
         doc = fitz.open(pdf_path)
+        
+        # Verifica se o PDF está protegido
+        if doc.needs_pass:
+            if not password:
+                doc.close()
+                return json.dumps({
+                    "error": "PDF_PROTECTED",
+                    "message": "PDF protegido por senha. Forneça a senha para continuar.",
+                    "bank_type": "unknown",
+                    "transactions_count": 0,
+                    "transactions": []
+                }, ensure_ascii=False, indent=2)
+            
+            # Tenta autenticar com a senha
+            if not doc.authenticate(password):
+                doc.close()
+                return json.dumps({
+                    "error": "INVALID_PASSWORD",
+                    "message": "Senha incorreta para o PDF protegido.",
+                    "bank_type": "unknown",
+                    "transactions_count": 0,
+                    "transactions": []
+                }, ensure_ascii=False, indent=2)
+        
         full_text = ""
         
         # Extrai texto de todas as páginas
@@ -284,30 +309,6 @@ def clean_value(value_str: str) -> str:
     except:
         return "0.00"
 
-gcp_tool = Tool(
-    name="AnalyzeFinancialDataGCP",
-    func=get_data_from_bigquery,
-    description="Realiza uma query no BigQuery. para informar sobre os dados da tabela de controle financeiro."
-)
-
-insert_gcp_tool = Tool(
-    name="InsertFinancialDataGCP",
-    func=insert_data_to_bigquery,
-    description="Insere dados financeiros na tabela do BigQuery. Envie um JSON com os campos: descricao, valor, data."
-)
-
-datetime_tool = Tool(
-    name="GetCurrentDateTime",
-    func=get_current_datetime,
-    description="Retorna a data e o horário atual do sistema."
-)
-
-pdf_extract_tool = Tool(
-    name="ExtractBankStatementPDF",
-    func=extract_bank_statement_from_pdf,
-    description="Extrai dados de transações financeiras de um PDF de fatura bancária. Recebe o caminho do arquivo PDF e retorna um JSON estruturado com as transações extraídas. Suporta múltiplos bancos como Nubank, Itaú, Bradesco, etc."
-)
-
 def process_pdf_and_insert_to_db(pdf_path: str) -> str:
     """
     Processa um PDF de fatura bancária e insere as transações diretamente no banco de dados.
@@ -324,6 +325,10 @@ def process_pdf_and_insert_to_db(pdf_path: str) -> str:
         
         # Parse do resultado JSON
         data = json.loads(extraction_result)
+        
+        # Verifica se há erro de PDF protegido
+        if "error" in data:
+            return f"Erro: {data['message']}"
         
         if "transactions" not in data or not data["transactions"]:
             return "Nenhuma transação encontrada no PDF."
@@ -373,8 +378,67 @@ def process_pdf_and_insert_to_db(pdf_path: str) -> str:
     except Exception as e:
         return f"Erro ao processar PDF e inserir no banco: {str(e)}"
 
+def extract_protected_pdf_with_password(pdf_path_and_password: str) -> str:
+    """
+    Extrai dados de PDF protegido com senha. 
+    Formato de entrada: "caminho_do_pdf|senha"
+    
+    Args:
+        pdf_path_and_password (str): String no formato "caminho|senha"
+        
+    Returns:
+        str: JSON com as transações extraídas ou mensagem de erro
+    """
+    try:
+        # Separa o caminho da senha
+        if "|" not in pdf_path_and_password:
+            return json.dumps({
+                "error": "INVALID_FORMAT",
+                "message": "Formato inválido. Use: 'caminho_do_pdf|senha'",
+                "bank_type": "unknown",
+                "transactions_count": 0,
+                "transactions": []
+            }, ensure_ascii=False, indent=2)
+        
+        pdf_path, password = pdf_path_and_password.split("|", 1)
+        return extract_bank_statement_from_pdf(pdf_path.strip(), password.strip())
+        
+    except Exception as e:
+        return f"Erro ao processar PDF protegido: {str(e)}"
+
+
+gcp_tool = Tool(
+    name="AnalyzeFinancialDataGCP",
+    func=get_data_from_bigquery,
+    description="Realiza uma query no BigQuery. para informar sobre os dados da tabela de controle financeiro."
+)
+
+insert_gcp_tool = Tool(
+    name="InsertFinancialDataGCP",
+    func=insert_data_to_bigquery,
+    description="Insere dados financeiros na tabela do BigQuery. Envie um JSON com os campos: descricao, valor, data."
+)
+
+datetime_tool = Tool(
+    name="GetCurrentDateTime",
+    func=get_current_datetime,
+    description="Retorna a data e o horário atual do sistema."
+)
+
+pdf_extract_tool = Tool(
+    name="ExtractBankStatementPDF",
+    func=extract_bank_statement_from_pdf,
+    description="Extrai dados de transações financeiras de um PDF de fatura bancária. Recebe o caminho do arquivo PDF e retorna um JSON estruturado com as transações extraídas. Suporta múltiplos bancos como Nubank, Itaú, Bradesco, etc."
+)
+
 pdf_process_and_insert_tool = Tool(
     name="ProcessPDFAndInsertToDB",
     func=process_pdf_and_insert_to_db,
     description="Processa um PDF de fatura bancária, extrai as transações e as insere automaticamente no banco de dados BigQuery. Recebe o caminho do arquivo PDF e retorna um resumo da operação."
+)
+
+pdf_protected_extract_tool = Tool(
+    name="ExtractProtectedPDFWithPassword",
+    func=extract_protected_pdf_with_password,
+    description="Extrai dados de um PDF protegido por senha. Use o formato: 'caminho_do_pdf|senha'. Exemplo: 'C:/docs/fatura.pdf|minha123senha'. Retorna JSON estruturado com as transações ou erro se a senha estiver incorreta."
 )

@@ -41,10 +41,14 @@ def insert_gasto(request: InsertRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/upload-pdf")
-async def upload_bank_statement_pdf(file: UploadFile = File(...)) -> Dict[str, Any]:
+async def upload_bank_statement_pdf(file: UploadFile = File(...), password: str = None) -> Dict[str, Any]:
     """
     Upload e processamento de PDF de fatura bancária.
     Extrai as transações e retorna os dados estruturados.
+    
+    Args:
+        file: Arquivo PDF da fatura bancária
+        password: Senha opcional para PDFs protegidos
     """
     try:
         # Verifica se é um arquivo PDF
@@ -58,9 +62,19 @@ async def upload_bank_statement_pdf(file: UploadFile = File(...)) -> Dict[str, A
             temp_file_path = temp_file.name
         
         try:
-            # Extrai dados do PDF
-            result = extract_bank_statement_from_pdf(temp_file_path)
+            # Extrai dados do PDF (com senha se fornecida)
+            result = extract_bank_statement_from_pdf(temp_file_path, password)
             extracted_data = json.loads(result)
+            
+            # Verifica se houve erro relacionado a PDF protegido
+            if "error" in extracted_data:
+                return {
+                    "success": False,
+                    "filename": file.filename,
+                    "error": extracted_data["error"],
+                    "message": extracted_data["message"],
+                    "requires_password": extracted_data["error"] == "PDF_PROTECTED"
+                }
             
             return {
                 "success": True,
@@ -117,12 +131,13 @@ async def upload_pdf_and_insert_to_db(file: UploadFile = File(...)) -> Dict[str,
         raise HTTPException(status_code=500, detail=f"Erro ao processar PDF e inserir no banco: {str(e)}")
 
 @router.post("/process-local-pdf")
-def process_local_pdf(pdf_path: str, insert_to_db: bool = False) -> Dict[str, Any]:
+def process_local_pdf(pdf_path: str, password: str = None, insert_to_db: bool = False) -> Dict[str, Any]:
     """
     Processa um PDF local (útil para desenvolvimento e testes).
     
     Args:
         pdf_path: Caminho para o arquivo PDF local
+        password: Senha opcional para PDFs protegidos
         insert_to_db: Se True, insere automaticamente no banco de dados
     """
     try:
@@ -131,18 +146,42 @@ def process_local_pdf(pdf_path: str, insert_to_db: bool = False) -> Dict[str, An
             raise HTTPException(status_code=404, detail=f"Arquivo não encontrado: {pdf_path}")
         
         if insert_to_db:
-            # Processa e insere no banco
-            result = process_pdf_and_insert_to_db(pdf_path)
+            # Para inserção no DB, primeiro extrai os dados
+            result = extract_bank_statement_from_pdf(pdf_path, password)
+            extracted_data = json.loads(result)
+            
+            # Verifica se houve erro
+            if "error" in extracted_data:
+                return {
+                    "success": False,
+                    "pdf_path": pdf_path,
+                    "error": extracted_data["error"],
+                    "message": extracted_data["message"],
+                    "requires_password": extracted_data["error"] == "PDF_PROTECTED"
+                }
+            
+            # Se não houve erro, processa e insere no banco
+            insert_result = process_pdf_and_insert_to_db(pdf_path)
             return {
                 "success": True,
                 "pdf_path": pdf_path,
-                "result": result,
+                "result": insert_result,
                 "message": "PDF processado e dados inseridos no banco"
             }
         else:
             # Apenas extrai os dados
-            result = extract_bank_statement_from_pdf(pdf_path)
+            result = extract_bank_statement_from_pdf(pdf_path, password)
             extracted_data = json.loads(result)
+            
+            # Verifica se houve erro
+            if "error" in extracted_data:
+                return {
+                    "success": False,
+                    "pdf_path": pdf_path,
+                    "error": extracted_data["error"],
+                    "message": extracted_data["message"],
+                    "requires_password": extracted_data["error"] == "PDF_PROTECTED"
+                }
             
             return {
                 "success": True,
