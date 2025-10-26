@@ -1,10 +1,11 @@
 from fastapi import APIRouter, HTTPException
-from app.models.schemas import InsertResponse, InsertRequest, convert_history
+from app.models.message_models import convert_history
+from app.models.insert_models import InsertResponse, InsertRequest
 from app.services.opena_ai_service import OpenAIService
 from app.services.ollama_service import OllamaService
 from app.core.config import log_error_to_file
-from app.core.prompts import research_prompt, insert_prompt
-import json
+from app.core.prompts import insert_prompt
+
 
 insert_router = APIRouter()
 
