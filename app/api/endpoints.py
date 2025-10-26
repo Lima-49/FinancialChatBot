@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.models.schemas import InsertResponse, ResearchRequest, ResearchResponse, InsertRequest, convert_history
+from app.models.schemas import InsertResponse, ResearchRequest, ResearchResponse, InsertRequest, convert_history, PDFBankStatementRequest, PDFBankStatementResponse
 from app.services.opena_ai_service import OpenAIService
 from app.services.ollama_service import OllamaService
 from app.core.config import log_error_to_file
@@ -32,6 +32,21 @@ def insert_gasto(request: InsertRequest):
         formatted_history = convert_history(request.chat_history)
         result = insert_service.run(request.query, formatted_history)
         return result
+    except Exception as e:
+        log_error_to_file(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/insertPdf", response_model=PDFBankStatementResponse)
+def insert_pdf_bank_statement(request: PDFBankStatementRequest):
+    try:
+        formatted_history = convert_history(request.chat_history)
+        # Assuming the query is a JSON string with the required fields
+        query_data = json.loads(request.query)
+        result = insert_service.run(json.dumps(query_data), formatted_history)
+        return result
+    except json.JSONDecodeError:
+        log_error_to_file("Invalid JSON format in request query")
+        raise HTTPException(status_code=400, detail="Invalid JSON format in request query")
     except Exception as e:
         log_error_to_file(e)
         raise HTTPException(status_code=500, detail=str(e))

@@ -3,6 +3,7 @@ from app.core.config import get_bigquery_client
 import pandas as pd
 import json
 from datetime import datetime
+from app.services.pdf_service import PDFService
 
 def get_data_from_bigquery(query: str) -> pd.DataFrame:
     client = get_bigquery_client()
@@ -39,6 +40,25 @@ def get_current_datetime(_: str = "") -> str:
     now = datetime.now()
     return f"Data atual: {now.strftime('%Y-%m-%d')}\nHorário atual: {now.strftime('%H:%M:%S')}"
 
+def insert_pdf_to_dataframe(pdf_path: str, password: str = "") -> str:
+    try:
+        service = PDFService()
+        df = service.process(pdf_path, password)
+        if df is not None and not df.empty:
+            return df.to_json(orient="records", force_ascii=False)
+        else:
+            return "Nenhum dado extraído do PDF."
+    except Exception as e:
+        return f"Erro ao processar o PDF: {e}"
+
+def analyze_pdf_data(df_json: str) -> str:
+    try:
+        df = pd.read_json(df_json)
+        summary = df.describe(include='all').to_string()
+        return summary
+    except Exception as e:
+        return f"Erro ao analisar os dados do DataFrame: {e}"
+    
 gcp_tool = Tool(
     name="AnalyzeFinancialDataGCP",
     func=get_data_from_bigquery,
@@ -55,4 +75,10 @@ datetime_tool = Tool(
     name="GetCurrentDateTime",
     func=get_current_datetime,
     description="Retorna a data e o horário atual do sistema."
+)
+
+pdf_to_dataframe_tool = Tool(
+    name="InsertPDFToDataFrame",
+    func=insert_pdf_to_dataframe,
+    description="Converte um extrato bancário em PDF para um DataFrame. Forneça o caminho do arquivo e, se necessário, a senha."
 )

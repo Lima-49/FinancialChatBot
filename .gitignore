@@ -6,3 +6,5 @@ config
 AgenteFinanceiro
 old_env.txt
 old
+bank statement files
+*.pdf

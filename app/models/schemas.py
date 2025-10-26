@@ -38,3 +38,17 @@ class InsertResponse(BaseModel):
     valor: float
     summary: str
 
+class PDFBankStatementRequest(BaseModel):
+    file_name: str
+    file_content: str
+    chat_history: Optional[List[Message]] = None
+    query: Optional[str] = None
+
+class PDFBankStatementResponse(BaseModel):
+    data: str
+    categoria: str
+    descricao: str
+    banco: int
+    metodo: int
+    valor: float
+    summary: str
