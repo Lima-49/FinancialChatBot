@@ -1,6 +1,7 @@
 from fastapi import FastAPI
-import app.core.config
-from app.api.endpoints import router as v1_router
+from app.api.insert_endpoint import insert_router
+from app.api.research_endpoint import router_research
 
 app = FastAPI()
-app.include_router(v1_router, prefix="/api/v1")
+app.include_router(insert_router, prefix="/api/v1")
+app.include_router(router_research, prefix="/api/v1")
