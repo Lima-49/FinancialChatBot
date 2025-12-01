@@ -8,3 +8,5 @@ old_env.txt
 old
 bank statement files
 *.pdf
+postgres_data
+__pycache__/
