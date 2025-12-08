@@ -1,0 +1,57 @@
+Table BANCOS {
+    ID_BANCO int [primary key]
+    NOME_BANCO varchar
+    VALOR_EM_CONTA float
+}
+
+
+Table CARTOES_DE_CREDITO {
+    ID_CARTAO int [primary key]
+    ID_BANCO int [ref: > BANCOS.ID_BANCO]
+    NOME_CARTAO varchar
+    TIPO_CARTAO varchar
+    DIA_VENCIMENTO integer
+}
+
+
+Table ENTRADAS {
+    ID_ENTRADA int [primary key]
+    ID_BANCO int [ref: > BANCOS.ID_BANCO]
+    NOME_ENTRADA varchar
+    TIPO_ENTRADA  varchar
+    VALOR_ENTRADA float
+    DATA_ENTRADA date
+}
+
+Table SAIDAS_FREQUENTES {
+    ID_SAIDA_FREQUENTE int [primary key]
+    ID_BANCO int [ref: > BANCOS.ID_BANCO]
+    NOME_SAIDA varchar
+    TIPO_SAIDA varchar
+    VALOR_SAIDA float
+    DATA_SAIDA date
+}
+
+Table COMPRAS_CARTOES_DE_CREDITO {
+    ID_COMPRA_CARTAO_CREDITO int [primary key]
+    ID_CARTAO int [ref: > CARTOES_DE_CREDITO.ID_CARTAO]
+    ID_BANCO int [ref: > BANCOS.ID_BANCO]
+    DATA_COMPRA date
+    ESTABELECIMENTO varchar
+    PARCELAS varchar
+    ID_CATEGORIA int [ref: > CATEGORIAS_DE_COMPRAS.ID_CATEGORIA]
+    VALOR_COMPRA float
+    OBSERVACOES varchar
+}
+
+Table CATEGORIAS_DE_COMPRAS{
+    ID_CATEGORIA int [primary key]
+    NOME_CATEGORIA varchar
+}
+
+Table LIMITES_COMPRAS {
+    ID_LIMITE_COMPRA int [primary key]
+    ID_CATEGORIA int [ref: > CATEGORIAS_DE_COMPRAS.ID_CATEGORIA]
+    LIMITE_CATEGORIA float
+    LIMITE_COMPRA float
+}
