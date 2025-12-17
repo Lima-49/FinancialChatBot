@@ -11,3 +11,5 @@ bank statement files
 init.sql
 postgres_data
 _pycharm_*
+notebooks
+database
