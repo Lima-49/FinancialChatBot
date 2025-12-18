@@ -1,11 +1,10 @@
-from flask import Flask, request
-import requests
+from flask import Blueprint, request
 from twilio.twiml.messaging_response import MessagingResponse
+import requests
+whatsapp_bp = Blueprint('whatsapp', __name__)
 
-app = Flask(__name__)
 
-
-@app.route('/bot', methods=['POST'])
+@whatsapp_bp.route('/bot', methods=['POST'])
 def bot():
     incoming_msg = request.values.get('Body', '').lower()
     resp = MessagingResponse()
@@ -28,7 +27,3 @@ def bot():
     if not responded:
         msg.body('I only know about famous quotes and cats, sorry!')
     return str(resp)
-
-
-if __name__ == '__main__':
-    app.run()
