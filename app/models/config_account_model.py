@@ -1,11 +1,12 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class ConfigAccountModelRequest(BaseModel):
-    account_id: Optional[int] = None
-    account_name: str
-    account_balance: float
+class ConfigBancos(BaseModel):
+    id_banco: Optional[int] = None
+    nome_banco: str
+    valor_em_conta: float
 
-class ConfigAccountModelResponse(BaseModel):
+
+class ConfigBancosResponse(BaseModel):
     success: bool
     message: str
