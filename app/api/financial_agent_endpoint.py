@@ -5,7 +5,6 @@ from app.models.research_models import ResearchResponse
 from app.services.opena_ai_service import OpenAIService
 from app.core.config import log_error_to_file
 from app.core.prompts import research_prompt
-from app.tools.tools import welcome_or_setup, _check_required_tables_status
 
 financial_agent_bp = Blueprint("financialAgent", __name__)
 
