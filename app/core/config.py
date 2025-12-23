@@ -30,3 +30,9 @@ def get_bigquery_client():
     credentials = service_account.Credentials.from_service_account_file(prod_credentials)
     client = bigquery.Client(credentials=credentials)
     return client
+
+# URL do site para configuração da conta (ex: Streamlit)
+SITE_CONFIG_URL = get_env_variable("SITE_CONFIG_URL", "https://seu-site-de-config.com")
+
+def get_site_config_url() -> str:
+    return SITE_CONFIG_URL

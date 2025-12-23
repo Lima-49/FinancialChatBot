@@ -5,6 +5,7 @@ from app.models.research_models import ResearchResponse
 from app.services.opena_ai_service import OpenAIService
 from app.core.config import log_error_to_file
 from app.core.prompts import research_prompt
+from app.tools.tools import welcome_or_setup, _check_required_tables_status
 
 financial_agent_bp = Blueprint("financialAgent", __name__)
 
@@ -19,7 +20,6 @@ def bot():
     msg = resp.message()
 
     try:
-        # Twilio sends form-encoded body; fallback to JSON if called directly.
         payload = request.get_json(silent=True) or {}
         incoming_msg = payload.get("query") or request.values.get("Body", "")
         chat_history_raw = payload.get("chat_history")
