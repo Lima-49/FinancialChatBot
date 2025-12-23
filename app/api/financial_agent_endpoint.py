@@ -36,7 +36,7 @@ def bot():
 
         response_text = (result.summary)
         msg.body(response_text)
-        return str(resp)
+        return msg.body(response_text)
     except Exception as e:
         log_error_to_file(e)
         msg.body("Ocorreu um erro no agente financeiro. Tente novamente em instantes.")

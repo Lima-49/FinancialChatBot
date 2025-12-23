@@ -25,12 +25,6 @@ def get_env_variable(name: str, default=None):
 def log_error_to_file(error):
     logger.error(str(error), exc_info=True)
 
-def get_bigquery_client():
-    prod_credentials = get_env_variable("GCP_SERVICE_ACCOUNT")
-    credentials = service_account.Credentials.from_service_account_file(prod_credentials)
-    client = bigquery.Client(credentials=credentials)
-    return client
-
 # URL do site para configuração da conta (ex: Streamlit)
 SITE_CONFIG_URL = get_env_variable("SITE_CONFIG_URL", "https://seu-site-de-config.com")
 

@@ -375,3 +375,24 @@ connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection re
 2025-12-17 22:51:25,235 [INFO] 127.0.0.1 - - [17/Dec/2025 22:51:25] "POST /api/v1/bot HTTP/1.1" 200 -
 2025-12-17 22:52:10,854 [INFO] 127.0.0.1 - - [17/Dec/2025 22:52:10] "POST /api/v1/bot HTTP/1.1" 200 -
 2025-12-17 22:53:44,403 [INFO] 127.0.0.1 - - [17/Dec/2025 22:53:44] "POST /api/v1/bot HTTP/1.1" 200 -
+2025-12-23 16:19:35,847 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-12-23 16:19:35,847 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-23 16:24:26,575 [INFO] 127.0.0.1 - - [23/Dec/2025 16:24:26] "POST /api/v1/bot HTTP/1.1" 200 -
+2025-12-23 16:25:12,076 [ERROR] Erro na conexão com o banco: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+2025-12-23 16:25:13,803 [INFO] 127.0.0.1 - - [23/Dec/2025 16:25:13] "POST /api/v1/bot HTTP/1.1" 200 -
+2025-12-23 16:29:41,329 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-12-23 16:29:41,330 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-23 16:30:13,890 [INFO] 127.0.0.1 - - [23/Dec/2025 16:30:13] "POST /api/v1/bot HTTP/1.1" 200 -
+2025-12-23 16:30:19,844 [ERROR] Erro na conexão com o banco: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+2025-12-23 16:30:22,578 [ERROR] Missing Twilio REST credentials or routing numbers; sent no REST message.
+NoneType: None
