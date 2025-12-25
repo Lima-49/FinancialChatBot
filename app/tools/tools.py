@@ -1,6 +1,13 @@
 from langchain_community.tools import Tool
 from app.core.config import get_site_config_url
 from app.services.postgres_service import PostgresService
+from app.services.bancos_service import BancosService
+from app.services.cartoes_credito_service import CartoesCreditoService
+from app.services.faturas_cartoes_de_credito_service import FaturasCartoesDeCreditoService
+from app.services.entradas_service import EntradasService
+from app.services.saidas_frequentes_service import SaidasFrequentesService
+from app.services.compras_cartao_de_credito_service import ComprasCartaoDeCreditoService
+from app.services.categorias_service import CategoriasService
 from datetime import datetime
 import json
 
@@ -10,14 +17,12 @@ def get_current_datetime(_: str = "") -> str:
     now = datetime.now()
     return f"Data atual: {now.strftime('%Y-%m-%d')}\nHorário atual: {now.strftime('%H:%M:%S')}"
 
-
 def first_message_tool(_: str = "") -> str:
     """Mensagem inicial para o usuário."""
     first_mesage = """
         Olá! Sou seu assistente financeiro. Posso ajudar a analisar dados financeiros e inserir novos registros.
     """
     return first_mesage
-
 
 def welcome_or_setup(_: str = "") -> str:
     """Retorna mensagem de boas-vindas e link do site.
@@ -43,13 +48,10 @@ def welcome_or_setup(_: str = "") -> str:
             f"Se quiser ajustar suas informações a qualquer momento, acesse: {site_url}"
         )
 
-
-# ==================== CONSULTAS DE BANCOS ====================
-
 def get_bancos_info(_: str = "") -> str:
     """Retorna informações sobre todos os bancos cadastrados."""
     try:
-        service = PostgresService()
+        service = BancosService()
         bancos = service.get_all_bancos()
         
         if not bancos:
@@ -60,11 +62,11 @@ def get_bancos_info(_: str = "") -> str:
         total_investido = 0
         
         for banco in bancos:
-            result += f"🏦 {banco['NOME_BANCO']} (ID: {banco['ID_BANCO']})\n"
-            result += f"   💰 Em conta: R$ {banco['VALOR_EM_CONTA']:.2f}\n"
-            result += f"   📈 Investido: R$ {banco['VALOR_INVESTIDO']:.2f}\n\n"
-            total_em_conta += banco['VALOR_EM_CONTA']
-            total_investido += banco['VALOR_INVESTIDO']
+            result += f"🏦 {banco.nome_banco} (ID: {banco.id_banco})\n"
+            result += f"   💰 Em conta: R$ {banco.valor_em_conta:.2f}\n"
+            result += f"   📈 Investido: R$ {banco.valor_investido:.2f}\n\n"
+            total_em_conta += banco.valor_em_conta
+            total_investido += banco.valor_investido
         
         result += f"**TOTAIS:**\n"
         result += f"Total em conta: R$ {total_em_conta:.2f}\n"
@@ -75,13 +77,10 @@ def get_bancos_info(_: str = "") -> str:
     except Exception as e:
         return f"Erro ao consultar bancos: {str(e)}"
 
-
-# ==================== CONSULTAS DE CARTÕES ====================
-
 def get_cartoes_info(_: str = "") -> str:
     """Retorna informações sobre todos os cartões de crédito."""
     try:
-        service = PostgresService()
+        service = CartoesCreditoService()
         cartoes = service.get_all_cartoes()
         
         if not cartoes:
@@ -90,25 +89,20 @@ def get_cartoes_info(_: str = "") -> str:
         result = "💳 **CARTÕES DE CRÉDITO**\n\n"
         
         for cartao in cartoes:
-            tipo_map = {1: "Débito", 2: "Crédito", 3: "Múltiplo"}
-            tipo = tipo_map.get(cartao['TIPO_CARTAO'], "Desconhecido")
-            
-            result += f"💳 {cartao['NOME_CARTAO']} (ID: {cartao['ID_CARTAO']})\n"
+            tipo = cartao.tipo_cartao
+            result += f"💳 {cartao.nome_cartao} (ID: {cartao.id_cartao})\n"
             result += f"   Tipo: {tipo}\n"
-            result += f"   Banco ID: {cartao['ID_BANCO']}\n"
-            result += f"   Vencimento: Dia {cartao['DIA_VENCIMENTO']}\n\n"
+            result += f"   Banco ID: {cartao.id_banco}\n"
+            result += f"   Vencimento: Dia {cartao.dia_vencimento}\n\n"
         
         return result
     except Exception as e:
         return f"Erro ao consultar cartões: {str(e)}"
 
-
-# ==================== CONSULTAS DE FATURAS ====================
-
 def get_faturas_pendentes(_: str = "") -> str:
     """Retorna todas as faturas não pagas."""
     try:
-        service = PostgresService()
+        service = FaturasCartoesDeCreditoService()
         faturas = service.get_faturas_nao_pagas()
         
         if not faturas:
@@ -118,18 +112,17 @@ def get_faturas_pendentes(_: str = "") -> str:
         total_pendente = 0
         
         for fatura in faturas:
-            result += f"📄 Fatura ID: {fatura['ID_FATURA_CARTAO_CREDITO']}\n"
-            result += f"   Cartão ID: {fatura['ID_CARTAO']}\n"
-            result += f"   Período: {fatura['MES_FATURA']:02d}/{fatura['ANO_FATURA']}\n"
-            result += f"   💰 Valor: R$ {fatura['VALOR_FATURA']:.2f}\n\n"
-            total_pendente += fatura['VALOR_FATURA']
+            result += f"📄 Fatura ID: {fatura.id_fatura_cartao_credito}\n"
+            result += f"   Cartão ID: {fatura.id_cartao}\n"
+            result += f"   Período: {fatura.mes_fatura:02d}/{fatura.ano_fatura}\n"
+            result += f"   💰 Valor: R$ {fatura.valor_fatura:.2f}\n\n"
+            total_pendente += fatura.valor_fatura
         
         result += f"**TOTAL PENDENTE: R$ {total_pendente:.2f}**"
         
         return result
     except Exception as e:
         return f"Erro ao consultar faturas: {str(e)}"
-
 
 def analyze_faturas_por_cartao(_: str = "") -> str:
     """Analisa e compara faturas por cartão, mostrando qual cartão tem maior fatura."""
@@ -175,13 +168,10 @@ def analyze_faturas_por_cartao(_: str = "") -> str:
     except Exception as e:
         return f"Erro ao analisar faturas: {str(e)}"
 
-
-# ==================== CONSULTAS DE ENTRADAS E SAÍDAS ====================
-
 def get_entradas_info(_: str = "") -> str:
     """Retorna informações sobre todas as entradas (receitas)."""
     try:
-        service = PostgresService()
+        service = EntradasService()
         entradas = service.get_all_entradas()
         
         if not entradas:
@@ -191,12 +181,12 @@ def get_entradas_info(_: str = "") -> str:
         total = 0
         
         for entrada in entradas:
-            result += f"✅ {entrada['NOME_ENTRADA']} (ID: {entrada['ID_ENTRADA']})\n"
-            result += f"   Tipo: {entrada['TIPO_ENTRADA']}\n"
-            result += f"   Valor: R$ {entrada['VALOR_ENTRADA']:.2f}\n"
-            result += f"   Dia de entrada: {entrada['DIA_ENTRADA']}\n"
-            result += f"   Banco ID: {entrada['ID_BANCO']}\n\n"
-            total += entrada['VALOR_ENTRADA']
+            result += f"✅ {entrada.nome_entrada} (ID: {entrada.id_entrada})\n"
+            result += f"   Tipo: {entrada.tipo_entrada}\n"
+            result += f"   Valor: R$ {entrada.valor_entrada:.2f}\n"
+            result += f"   Dia de entrada: {entrada.dia_entrada}\n"
+            result += f"   Banco ID: {entrada.id_banco}\n\n"
+            total += entrada.valor_entrada
         
         result += f"**TOTAL DE ENTRADAS MENSAIS: R$ {total:.2f}**"
         
@@ -204,11 +194,10 @@ def get_entradas_info(_: str = "") -> str:
     except Exception as e:
         return f"Erro ao consultar entradas: {str(e)}"
 
-
 def get_saidas_info(_: str = "") -> str:
     """Retorna informações sobre todas as saídas frequentes."""
     try:
-        service = PostgresService()
+        service = SaidasFrequentesService()
         saidas = service.get_all_saidas_frequentes()
         
         if not saidas:
@@ -218,11 +207,11 @@ def get_saidas_info(_: str = "") -> str:
         total = 0
         
         for saida in saidas:
-            result += f"❌ {saida['NOME_SAIDA']} (ID: {saida['ID_SAIDA_FREQUENTE']})\n"
-            result += f"   Tipo: {saida['TIPO_SAIDA']}\n"
-            result += f"   Valor: R$ {saida['VALOR_SAIDA']:.2f}\n"
-            result += f"   Dia de saída: {saida['DIA_SAIDA']}\n\n"
-            total += saida['VALOR_SAIDA']
+            result += f"❌ {saida.nome_saida} (ID: {saida.id_saida_frequente})\n"
+            result += f"   Tipo: {saida.tipo_saida}\n"
+            result += f"   Valor: R$ {saida.valor_saida:.2f}\n"
+            result += f"   Dia de saída: {saida.dia_saida}\n\n"
+            total += saida.valor_saida
         
         result += f"**TOTAL DE SAÍDAS MENSAIS: R$ {total:.2f}**"
         
@@ -230,20 +219,19 @@ def get_saidas_info(_: str = "") -> str:
     except Exception as e:
         return f"Erro ao consultar saídas: {str(e)}"
 
-
-# ==================== ANÁLISE FINANCEIRA ====================
-
 def analyze_balance(_: str = "") -> str:
     """Analisa o balanço financeiro entre entradas e saídas."""
     try:
-        service = PostgresService()
-        entradas = service.get_all_entradas()
-        saidas = service.get_all_saidas_frequentes()
-        faturas_pendentes = service.get_faturas_nao_pagas()
+        entrada_service = EntradasService()
+        saida_service = SaidasFrequentesService()
+        faturas_service = FaturasCartoesDeCreditoService()
+        entradas = entrada_service.get_all_entradas()
+        saidas = saida_service.get_all_saidas_frequentes()
+        faturas_pendentes = faturas_service.get_faturas_nao_pagas()
         
-        total_entradas = sum(e['VALOR_ENTRADA'] for e in entradas)
-        total_saidas = sum(s['VALOR_SAIDA'] for s in saidas)
-        total_faturas_pendentes = sum(f['VALOR_FATURA'] for f in faturas_pendentes)
+        total_entradas = sum(e.valor_entrada for e in entradas)
+        total_saidas = sum(s.valor_saida for s in saidas)
+        total_faturas_pendentes = sum(f.valor_fatura for f in faturas_pendentes)
         
         saldo = total_entradas - total_saidas - total_faturas_pendentes
         
@@ -264,28 +252,26 @@ def analyze_balance(_: str = "") -> str:
     except Exception as e:
         return f"Erro ao analisar balanço: {str(e)}"
 
-
-# ==================== CONSULTAS DE COMPRAS ====================
-
 def get_compras_por_categoria(_: str = "") -> str:
     """Retorna análise de compras agrupadas por categoria."""
     try:
-        service = PostgresService()
-        compras = service.get_all_compras_cartao()
-        categorias = service.get_all_categorias()
+        compras_service = ComprasCartaoDeCreditoService()
+        categorias_service = CategoriasService()
+        compras = compras_service.get_all_compras_cartao()
+        categorias = categorias_service.get_all_categorias()
         
         if not compras:
             return "Nenhuma compra cadastrada."
         
         # Criar mapa de categorias
-        categorias_map = {c['ID_CATEGORIA']: c['NOME_CATEGORIA'] for c in categorias}
+        categorias_map = {c.id_categoria: c.nome_categoria for c in categorias}
         
         # Agrupar por categoria
         totais_por_categoria = {}
         for compra in compras:
-            id_cat = compra['ID_CATEGORIA']
+            id_cat = compra.id_categoria
             nome_cat = categorias_map.get(id_cat, "Sem categoria")
-            valor = compra['VALOR_COMPRA']
+            valor = compra.valor_compra
             
             if nome_cat not in totais_por_categoria:
                 totais_por_categoria[nome_cat] = 0
@@ -308,9 +294,6 @@ def get_compras_por_categoria(_: str = "") -> str:
     except Exception as e:
         return f"Erro ao consultar compras por categoria: {str(e)}"
 
-
-# ==================== INSERÇÃO DE DADOS ====================
-
 def insert_compra_cartao(input_json: str) -> str:
     """Insere uma nova compra de cartão de crédito.
     
@@ -328,7 +311,7 @@ def insert_compra_cartao(input_json: str) -> str:
     """
     try:
         data = json.loads(input_json)
-        service = PostgresService()
+        service = ComprasCartaoDeCreditoService()
         
         # Converter data string para date object
         from datetime import datetime
@@ -350,7 +333,6 @@ def insert_compra_cartao(input_json: str) -> str:
         return "❌ Erro: JSON inválido. Verifique o formato dos dados."
     except Exception as e:
         return f"❌ Erro ao inserir compra: {str(e)}"
-
 
 
 datetime_tool = Tool(
@@ -433,5 +415,6 @@ insert_compra_tool = Tool(
     description=(
         "Insere uma nova compra de cartão de crédito. "
         "Requer JSON com: id_cartao, id_banco, data_compra, estabelecimento, parcelas, id_categoria, valor_compra, observacoes (opcional)."
+        "Pode usar a função get_categories para obter as categorias inseridas pelo usuario, se não se encaixar em nenhuma pode criar uma nova categoria"
     )
 )
