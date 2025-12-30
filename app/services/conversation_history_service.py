@@ -123,8 +123,8 @@ class ConversationHistoryService:
                         tipo_mensageiro = 'user' if row['tipo_mensageiro'] == 'user' else 'bot'
                         
                         messages.append(Message(
-                            tipo_mensageiro=tipo_mensageiro,
-                            conteudo_mensagem=decrypted_conteudo_mensagem
+                            role=tipo_mensageiro,
+                            content=decrypted_conteudo_mensagem
                         ))
                     except Exception as e:
                         logger.error(f"Erro ao descriptografar mensagem: {e}")
