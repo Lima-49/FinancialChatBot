@@ -511,3 +511,77 @@ LINE 1: ...2025-12-25'::date, 'mercadinho do concominio', 1, 'Mercado',...
                                                              ^
 
 2025-12-25 17:25:18,842 [INFO] 127.0.0.1 - - [25/Dec/2025 17:25:18] "POST /api/v1/bot HTTP/1.1" 200 -
+2025-12-30 20:01:57,700 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-12-30 20:01:57,701 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-30 20:35:49,369 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-12-30 20:35:49,369 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-30 20:37:16,130 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-12-30 20:37:16,130 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-30 20:37:45,444 [ERROR] Erro na conexão com o banco: value too long for type character varying(20)
+
+2025-12-30 20:37:45,445 [ERROR] Erro ao salvar mensagem: value too long for type character varying(20)
+
+2025-12-30 20:38:08,050 [ERROR] Erro na conexão com o banco: value too long for type character varying(20)
+
+2025-12-30 20:38:08,050 [ERROR] Erro ao salvar mensagem: value too long for type character varying(20)
+
+2025-12-30 20:38:10,711 [INFO] 127.0.0.1 - - [30/Dec/2025 20:38:10] "POST /api/v1/bot HTTP/1.1" 200 -
+2025-12-30 20:41:32,199 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-12-30 20:41:32,199 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-30 20:41:45,273 [INFO] 127.0.0.1 - - [30/Dec/2025 20:41:45] "POST /api/v1/bot HTTP/1.1" 200 -
+2025-12-30 20:43:17,027 [INFO] 127.0.0.1 - - [30/Dec/2025 20:43:17] "POST /api/v1/bot HTTP/1.1" 200 -
+2025-12-30 20:46:02,843 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-12-30 20:46:02,843 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-30 20:46:11,645 [ERROR] Erro ao descriptografar mensagem: 2 validation errors for Message
+role
+  Field required [type=missing, input_value={'tipo_mensageiro': 'user...teudo_mensagem': 'olá'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+content
+  Field required [type=missing, input_value={'tipo_mensageiro': 'user...teudo_mensagem': 'olá'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+2025-12-30 20:46:11,645 [ERROR] Erro ao descriptografar mensagem: 2 validation errors for Message
+role
+  Field required [type=missing, input_value={'tipo_mensageiro': 'bot'...r suas finanças hoje?'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+content
+  Field required [type=missing, input_value={'tipo_mensageiro': 'bot'...r suas finanças hoje?'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+2025-12-30 20:46:19,001 [INFO] 127.0.0.1 - - [30/Dec/2025 20:46:19] "POST /api/v1/bot HTTP/1.1" 200 -
+2025-12-30 20:46:47,673 [ERROR] Erro ao descriptografar mensagem: 2 validation errors for Message
+role
+  Field required [type=missing, input_value={'tipo_mensageiro': 'user...teudo_mensagem': 'olá'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+content
+  Field required [type=missing, input_value={'tipo_mensageiro': 'user...teudo_mensagem': 'olá'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+2025-12-30 20:46:47,674 [ERROR] Erro ao descriptografar mensagem: 2 validation errors for Message
+role
+  Field required [type=missing, input_value={'tipo_mensageiro': 'bot'...r suas finanças hoje?'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+content
+  Field required [type=missing, input_value={'tipo_mensageiro': 'bot'...r suas finanças hoje?'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+2025-12-30 20:46:47,674 [ERROR] Erro ao descriptografar mensagem: 2 validation errors for Message
+role
+  Field required [type=missing, input_value={'tipo_mensageiro': 'user...á gastei até agora ?'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+content
+  Field required [type=missing, input_value={'tipo_mensageiro': 'user...á gastei até agora ?'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+2025-12-30 20:46:47,674 [ERROR] Erro ao descriptografar mensagem: 2 validation errors for Message
+role
+  Field required [type=missing, input_value={'tipo_mensageiro': 'bot'...gistrado nenhum gasto.'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+content
+  Field required [type=missing, input_value={'tipo_mensageiro': 'bot'...gistrado nenhum gasto.'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+2025-12-30 20:48:09,909 [INFO] 127.0.0.1 - - [30/Dec/2025 20:48:09] "POST /api/v1/bot HTTP/1.1" 200 -
+2025-12-30 20:49:35,182 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-12-30 20:49:35,183 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-30 20:50:54,865 [INFO] 127.0.0.1 - - [30/Dec/2025 20:50:54] "POST /api/v1/bot HTTP/1.1" 200 -
