@@ -13,7 +13,7 @@ class CartoesCreditoService:
             with conn.cursor() as cur:
                 cur.execute('SELECT * FROM "cartoes_de_credito"')
                 rows = cur.fetchall()
-                return [self.cartao_credito_model.from_dict(row).to_dict() for row in rows]
+                return [self.cartao_credito_model.from_dict(row) for row in rows]
     
     def get_cartao_by_id(self, id_cartao: int) -> Optional[CartoesCreditoModel]:
         """Retorna um cartão específico por ID."""
@@ -21,7 +21,7 @@ class CartoesCreditoService:
             with conn.cursor() as cur:
                 cur.execute('SELECT * FROM "cartoes_de_credito" WHERE "id_cartao" = %s', (id_cartao,))
                 row = cur.fetchone()
-                return self.cartao_credito_model.from_dict(row).to_dict() if row else None
+                return self.cartao_credito_model.from_dict(row) if row else None
     
     def get_cartoes_by_banco(self, id_banco: int) -> List[CartoesCreditoModel]:
         """Retorna todos os cartões de um banco."""
@@ -29,7 +29,7 @@ class CartoesCreditoService:
             with conn.cursor() as cur:
                 cur.execute('SELECT * FROM "cartoes_de_credito" WHERE "id_banco" = %s', (id_banco,))
                 rows = cur.fetchall()
-                return [self.cartao_credito_model.from_dict(row).to_dict() for row in rows]
+                return [self.cartao_credito_model.from_dict(row) for row in rows]
     
     def insert_cartao(self, id_banco: int, nome_cartao: str, tipo_cartao: int, dia_vencimento: int) -> int:
         """Insere um novo cartão de crédito."""

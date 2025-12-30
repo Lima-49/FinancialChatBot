@@ -1,6 +1,6 @@
 from typing import Optional, List
 from app.services.postgres_service import PostgresService
-from models.saidas_frequentes_model import SaidasFrequentesModel
+from app.models.saidas_frequentes_model import SaidasFrequentesModel
 
 class SaidasFrequentesService():
     def __init__(self):

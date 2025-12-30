@@ -127,20 +127,21 @@ def get_faturas_pendentes(_: str = "") -> str:
 def analyze_faturas_por_cartao(_: str = "") -> str:
     """Analisa e compara faturas por cartão, mostrando qual cartão tem maior fatura."""
     try:
-        service = PostgresService()
-        faturas = service.get_all_faturas()
-        cartoes = service.get_all_cartoes()
+        faturas_cartoes_service = FaturasCartoesDeCreditoService()
+        cartoes_service =  CartoesCreditoService()
+        faturas = faturas_cartoes_service.get_all_faturas()
+        cartoes = cartoes_service.get_all_cartoes()
         
         if not faturas:
             return "Nenhuma fatura cadastrada no sistema."
         
         # Dicionário para armazenar total por cartão
         totais_por_cartao = {}
-        cartoes_map = {c['ID_CARTAO']: c['NOME_CARTAO'] for c in cartoes}
+        cartoes_map = {c.id_cartao: c.nome_cartao for c in cartoes}
         
         for fatura in faturas:
-            id_cartao = fatura['ID_CARTAO']
-            valor = fatura['VALOR_FATURA']
+            id_cartao = fatura.id_cartao
+            valor = fatura.valor_fatura
             
             if id_cartao not in totais_por_cartao:
                 totais_por_cartao[id_cartao] = 0
@@ -309,6 +310,8 @@ def insert_compra_cartao(input_json: str) -> str:
         "observacoes": "Observação opcional"
     }
     """
+
+    ##TODO: Ainda não está funcionando corretamente a inserção via JSON. Revisar depois.
     try:
         data = json.loads(input_json)
         service = ComprasCartaoDeCreditoService()

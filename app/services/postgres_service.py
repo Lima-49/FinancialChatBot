@@ -1,5 +1,6 @@
 from typing import Dict
 import psycopg2
+import psycopg2.extras 
 import logging
 from contextlib import contextmanager
 import os

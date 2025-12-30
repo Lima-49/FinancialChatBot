@@ -1,6 +1,6 @@
 from typing import Optional, List
 from app.services.postgres_service import PostgresService
-from models.categorias_model import CategoriasModel 
+from app.models.categorias_model import CategoriasModel 
 
 class CategoriasService():
     def __init__(self):

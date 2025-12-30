@@ -13,3 +13,4 @@ postgres_data
 _pycharm_*
 notebooks
 database
+__pycache__

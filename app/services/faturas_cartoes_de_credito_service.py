@@ -1,6 +1,6 @@
 from typing import Optional, List
 from app.services.postgres_service import PostgresService
-from models.faturas_cartoes_de_credito_model import FaturasCartoesDeCreditoModel
+from app.models.faturas_cartoes_de_credito_model import FaturasCartoesDeCreditoModel
 
 class FaturasCartoesDeCreditoService():
  
@@ -8,7 +8,7 @@ class FaturasCartoesDeCreditoService():
         self.postgres_service = PostgresService()
         self.faturas_cartoes_de_credito_model = FaturasCartoesDeCreditoModel()
 
-    def get_all_faturas(self) -> List[PostgresService]:
+    def get_all_faturas(self) -> List[FaturasCartoesDeCreditoModel]:
         """Retorna todas as faturas."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
@@ -16,7 +16,7 @@ class FaturasCartoesDeCreditoService():
                 rows = cur.fetchall()
                 return [self.faturas_cartoes_de_credito_model.from_dict(row) for row in rows]
     
-    def get_fatura_by_id(self, id_fatura: int) -> Optional[PostgresService]:
+    def get_fatura_by_id(self, id_fatura: int) -> Optional[FaturasCartoesDeCreditoModel]:
         """Retorna uma fatura específica por ID."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
@@ -24,7 +24,7 @@ class FaturasCartoesDeCreditoService():
                 row = cur.fetchone()
                 return self.faturas_cartoes_de_credito_model.from_dict(row) if row else None
     
-    def get_faturas_by_cartao(self, id_cartao: int) -> List[PostgresService]:
+    def get_faturas_by_cartao(self, id_cartao: int) -> List[FaturasCartoesDeCreditoModel]:
         """Retorna todas as faturas de um cartão."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
@@ -32,7 +32,7 @@ class FaturasCartoesDeCreditoService():
                 rows = cur.fetchall()
                 return [self.faturas_cartoes_de_credito_model.from_dict(row) for row in rows]
     
-    def get_faturas_by_mes_ano(self, mes: int, ano: int) -> List[PostgresService]:
+    def get_faturas_by_mes_ano(self, mes: int, ano: int) -> List[FaturasCartoesDeCreditoModel]:
         """Retorna todas as faturas de um mês e ano específicos."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
@@ -43,7 +43,7 @@ class FaturasCartoesDeCreditoService():
                 rows = cur.fetchall()
                 return [self.faturas_cartoes_de_credito_model.from_dict(row) for row in rows]
     
-    def get_faturas_nao_pagas(self) -> List[PostgresService]:
+    def get_faturas_nao_pagas(self) -> List[FaturasCartoesDeCreditoModel]:
         """Retorna todas as faturas não pagas."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:

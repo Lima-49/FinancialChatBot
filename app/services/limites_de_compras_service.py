@@ -1,6 +1,6 @@
 from typing import Optional, List
 from app.services.postgres_service import PostgresService
-from models.limites_de_compras_model import LimitesDeComprasModel
+from app.models.limites_de_compras_model import LimitesDeComprasModel
 
 class LimitesDeComprasService():
     """Serviço para interações com limites de compras."""

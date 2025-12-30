@@ -1,6 +1,6 @@
 from typing import Optional, List
 from app.services.postgres_service import PostgresService
-from models.bancos_model import BancosModel
+from app.models.bancos_model import BancosModel
 
 class BancosService:
     def __init__(self):
@@ -13,7 +13,7 @@ class BancosService:
             with conn.cursor() as cur:
                 cur.execute('SELECT * FROM "bancos"')
                 rows = cur.fetchall()
-                return [self.banco_model.from_dict(row).to_dict() for row in rows]
+                return [self.banco_model.from_dict(row) for row in rows]
     
     def get_banco_by_id(self, id_banco: int) -> Optional[BancosModel]:
         """Retorna um banco específico por ID."""
@@ -21,7 +21,7 @@ class BancosService:
             with conn.cursor() as cur:
                 cur.execute('SELECT * FROM "bancos" WHERE "id_banco" = %s', (id_banco,))
                 row = cur.fetchone()
-                return self.banco_model.from_dict(row).to_dict() if row else None
+                return self.banco_model.from_dict(row) if row else None
     
     def insert_banco(self, nome_banco: str, valor_em_conta: float = 0.0, valor_investido: float = 0.0) -> int:
         """Insere um novo banco e retorna o ID gerado."""

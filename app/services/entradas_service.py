@@ -13,7 +13,7 @@ class EntradasService():
             with conn.cursor() as cur:
                 cur.execute('SELECT * FROM "entradas"')
                 rows = cur.fetchall()
-                return [self.entradas_model.from_dict(row).to_dict() for row in rows]
+                return [self.entradas_model.from_dict(row) for row in rows]
     
     def get_entrada_by_id(self, id_entrada: int) -> Optional[EntradasModel]:
         """Retorna uma entrada específica por ID."""
@@ -21,7 +21,7 @@ class EntradasService():
             with conn.cursor() as cur:
                 cur.execute('SELECT * FROM "entradas" WHERE "id_entrada" = %s', (id_entrada,))
                 row = cur.fetchone()
-                return self.entradas_model.from_dict(row).to_dict() if row else None
+                return self.entradas_model.from_dict(row) if row else None
     
     def get_entradas_by_banco(self, id_banco: int) -> List[EntradasModel]:
         """Retorna todas as entradas de um banco."""
@@ -29,7 +29,7 @@ class EntradasService():
             with conn.cursor() as cur:
                 cur.execute('SELECT * FROM "entradas" WHERE "id_banco" = %s', (id_banco,))
                 rows = cur.fetchall()
-                return [self.entradas_model.from_dict(row).to_dict() for row in rows]
+                return [self.entradas_model.from_dict(row) for row in rows]
     
     def insert_entrada(self, id_banco: int, nome_entrada: str, tipo_entrada: str, valor_entrada: float, dia_entrada: int) -> int:
         """Insere uma nova entrada."""

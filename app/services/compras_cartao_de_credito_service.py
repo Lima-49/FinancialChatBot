@@ -1,7 +1,7 @@
 from typing import Optional, List
 from app.services.postgres_service import PostgresService
 from datetime import date
-from models.compras_cartoes_de_credito_model import ComprasCartoesDeCreditoModel
+from app.models.compras_cartoes_de_credito_model import ComprasCartoesDeCreditoModel
 
 class ComprasCartaoDeCreditoService:
     def __init__(self):
