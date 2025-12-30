@@ -1,9 +1,7 @@
 import os
 from dotenv import load_dotenv
-import traceback
-from google.cloud import bigquery
-from google.oauth2 import service_account
 import logging
+from cryptography.fernet import Fernet
 
 load_dotenv()
 
@@ -30,3 +28,26 @@ SITE_CONFIG_URL = get_env_variable("SITE_CONFIG_URL", "https://seu-site-de-confi
 
 def get_site_config_url() -> str:
     return SITE_CONFIG_URL
+
+
+def generate_encryption_key() -> str:
+    """
+    Gera uma nova chave de criptografia Fernet.
+    Execute esta função UMA VEZ e salve o resultado no .env
+    
+    Exemplo de uso:
+    >>> from app.core.config import generate_encryption_key
+    >>> print(generate_encryption_key())
+    """
+    return Fernet.generate_key().decode()
+
+
+def get_encryption_key() -> str:
+    """Recupera a chave de criptografia das variáveis de ambiente"""
+    key = get_env_variable("CONVERSATION_ENCRYPTION_KEY")
+    if not key:
+        raise ValueError(
+            "CONVERSATION_ENCRYPTION_KEY não encontrada. "
+            "Use generate_encryption_key() para gerar uma nova chave."
+        )
+    return key
