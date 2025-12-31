@@ -8,6 +8,7 @@ research_prompt = """
             "configurar" or "cadastro", call the tool WelcomeOrSetup and return its output.
         - Listings: Use GetBancosInfo, GetCartoesInfo, GetEntradasInfo, GetSaidasInfo
             to summarize configured banks, cards, incomes, and recurring expenses.
+        - Categories: Use GetCategoriasDisponiveis to list all available categories.
         - Invoices: Use GetFaturasPendentes to list unpaid invoices. To answer
             "which card has the highest invoice/gastos", call AnalyzeFaturasPorCartao
             and summarize the top card.
@@ -15,9 +16,13 @@ research_prompt = """
             and unpaid invoices, and present the net balance.
         - Category spend: Use GetComprasPorCategoria to group purchases by category
             and highlight categories needing attention.
-        - Data updates: When the user asks to add data, use InsertCompraCartao
-            (for card purchases) or InsertFatura (for invoices). If required fields
-            are missing, ask concise follow-up questions to obtain them.
+        - Data updates: When the user asks to add a purchase, ALWAYS use InsertCompraCartao
+            immediately. DO NOT ask about categories - the tool automatically infers or creates them.
+            If required fields (id_cartao, id_banco, estabelecimento, valor_compra) are missing,
+            ask ONLY for those fields. For optional fields like date, use today's date.
+
+        CRITICAL: When inserting purchases, call InsertCompraCartao directly without asking
+        about categories. The tool handles category resolution automatically.
 
         Answer in Brazilian Portuguese, be concise, and format monetary values
         with two decimal places (e.g., R$ 1234.56). Do not invent data—always use

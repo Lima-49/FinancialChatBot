@@ -6,7 +6,7 @@ from app.services.cartoes_credito_service import CartoesCreditoService
 from app.services.faturas_cartoes_de_credito_service import FaturasCartoesDeCreditoService
 from app.services.entradas_service import EntradasService
 from app.services.saidas_frequentes_service import SaidasFrequentesService
-from app.services.compras_cartao_de_credito_service import ComprasCartaoDeCreditoService
+from app.services.compras_cartao_service import ComprasCartaoService
 from app.services.categorias_service import CategoriasService
 from datetime import datetime
 import json
@@ -253,10 +253,31 @@ def analyze_balance(_: str = "") -> str:
     except Exception as e:
         return f"Erro ao analisar balanço: {str(e)}"
 
+def get_categorias_disponiveis(_: str = "") -> str:
+    """Retorna lista de todas as categorias disponíveis para classificação de compras."""
+    try:
+        categorias_service = CategoriasService()
+        categorias = categorias_service.get_all_categorias()
+        
+        if not categorias:
+            return "Nenhuma categoria cadastrada no sistema."
+        
+        result = "📋 **CATEGORIAS DISPONÍVEIS**\n\n"
+        
+        for cat in categorias:
+            result += f"{cat.id_categoria}. {cat.nome_categoria}\n"
+        
+        result += "\n💡 Para adicionar uma compra, você pode usar o ID ou nome da categoria.\n"
+        result += "Se a categoria não existir, será criada automaticamente."
+        
+        return result
+    except Exception as e:
+        return f"Erro ao consultar categorias: {str(e)}"
+
 def get_compras_por_categoria(_: str = "") -> str:
     """Retorna análise de compras agrupadas por categoria."""
     try:
-        compras_service = ComprasCartaoDeCreditoService()
+        compras_service = ComprasCartaoService()
         categorias_service = CategoriasService()
         compras = compras_service.get_all_compras_cartao()
         categorias = categorias_service.get_all_categorias()
@@ -302,11 +323,12 @@ def insert_compra_cartao(input_json: str) -> str:
     {
         "id_cartao": 1,
         "id_banco": 1,
-        "data_compra": "2024-12-23",
+        "data_compra": "YYYY-MM-DD" | "DD/MM/YYYY" | "hoje" | "hj" (opcional, padrão hoje),
         "estabelecimento": "Nome do estabelecimento",
-        "parcelas": "1 de 1" ou "3 de 4",
-        "id_categoria": 1,
-        "valor_compra": 150.00,
+        "parcelas": "1 de 1" (opcional, padrão 1 de 1),
+        "id_categoria": 1 | null,
+        "nome_categoria": "Refeição" (opcional, usado se id não vier),
+        "valor_compra": 150.00 | "150,00",
         "observacoes": "Observação opcional"
     }
     """
@@ -314,7 +336,7 @@ def insert_compra_cartao(input_json: str) -> str:
     ##TODO: Ainda não está funcionando corretamente a inserção via JSON. Revisar depois.
     try:
         data = json.loads(input_json)
-        service = ComprasCartaoDeCreditoService()
+        service = ComprasCartaoService()
         
         # Converter data string para date object
         from datetime import datetime
@@ -403,6 +425,15 @@ balance_tool = Tool(
     )
 )
 
+categorias_tool = Tool(
+    name="GetCategoriasDisponiveis",
+    func=get_categorias_disponiveis,
+    description=(
+        "Lista todas as categorias disponíveis no sistema para classificação de compras. "
+        "Use esta tool quando o usuário perguntar sobre categorias ou quando precisar saber quais categorias existem."
+    )
+)
+
 compras_categoria_tool = Tool(
     name="GetComprasPorCategoria",
     func=get_compras_por_categoria,
@@ -416,8 +447,10 @@ insert_compra_tool = Tool(
     name="InsertCompraCartao",
     func=insert_compra_cartao,
     description=(
-        "Insere uma nova compra de cartão de crédito. "
-        "Requer JSON com: id_cartao, id_banco, data_compra, estabelecimento, parcelas, id_categoria, valor_compra, observacoes (opcional)."
-        "Pode usar a função get_categories para obter as categorias inseridas pelo usuario, se não se encaixar em nenhuma pode criar uma nova categoria"
+        "Insere uma nova compra de cartão no banco de dados. "
+        "SEMPRE use esta tool para registrar compras - NÃO pergunte ao usuário sobre categorias. "
+        "Se a categoria não for informada, a tool infere automaticamente do estabelecimento ou cria uma nova. "
+        "Formato JSON: {id_cartao, id_banco, data_compra(opcional, padrão hoje), estabelecimento, parcelas(opcional), nome_categoria(opcional), valor_compra, observacoes(opcional)}. "
+        "A tool retornará confirmação com todos os detalhes da compra inserida."
     )
 )
