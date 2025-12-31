@@ -1,0 +1,128 @@
+name: PR Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pylint mypy pydocstyle bandit
+
+      - name: Mypy (tipagem obrigatoria)
+        id: mypy
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          mypy app main.py --disallow-untyped-defs --ignore-missing-imports | tee /tmp/mypy.log
+          echo "status=$?" >> $GITHUB_OUTPUT
+
+      - name: Pydocstyle (docstrings obrigatorias)
+        id: pydocstyle
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          pydocstyle app main.py | tee /tmp/pydocstyle.log
+          echo "status=$?" >> $GITHUB_OUTPUT
+
+      - name: Pylint (snake_case e boas praticas)
+        id: pylint
+        continue-on-error: true
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          set -o pipefail
+          pylint app main.py --disable=C0114,C0115,C0116 | tee /tmp/pylint.log
+          echo "status=$?" >> $GITHUB_OUTPUT
+
+      - name: Bandit (seguranca)
+        id: bandit
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          bandit -r app main.py | tee /tmp/bandit.log
+          echo "status=$?" >> $GITHUB_OUTPUT
+
+      - name: Resumo da revisao
+        id: summarize
+        run: |
+          summary="### Revisao automatizada\n"
+
+          if [ "${{ steps.mypy.outputs.status }}" = "0" ]; then
+            summary+="- ✅ mypy (tipagem): ok\n"
+          else
+            summary+="- ❌ mypy (tipagem): ajuste anotacoes de tipo e retornos\n"
+          fi
+
+          if [ "${{ steps.pydocstyle.outputs.status }}" = "0" ]; then
+            summary+="- ✅ pydocstyle (docstrings): ok\n"
+          else
+            summary+="- ❌ pydocstyle (docstrings): adicione descricao nas funcoes/metodos\n"
+          fi
+
+          if [ "${{ steps.pylint.outputs.status }}" = "0" ]; then
+            summary+="- ✅ pylint (snake_case/padrões): ok\n"
+          else
+            summary+="- ❌ pylint (snake_case/padrões): confira nomeacao e boas praticas\n"
+          fi
+
+          if [ "${{ steps.bandit.outputs.status }}" = "0" ]; then
+            summary+="- ✅ bandit (seguranca): ok\n"
+          else
+            summary+="- ❌ bandit (seguranca): revise possiveis riscos\n"
+          fi
+
+          fail=0
+          for code in "${{ steps.mypy.outputs.status }}" "${{ steps.pydocstyle.outputs.status }}" "${{ steps.pylint.outputs.status }}" "${{ steps.bandit.outputs.status }}"; do
+            if [ "$code" != "0" ]; then
+              fail=1
+            fi
+          done
+
+          {
+            echo "summary<<'EOF'"
+            echo "$summary"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+          echo "fail=$fail" >> $GITHUB_OUTPUT
+
+      - name: Comentar no PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/github-script@v7
+        env:
+          SUMMARY: ${{ steps.summarize.outputs.summary }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const summary = process.env.SUMMARY;
+            const { owner, repo, number } = context.issue;
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: number,
+              body: summary,
+            });
+
+      - name: Falhar se houve problemas
+        if: ${{ steps.summarize.outputs.fail == '1' }}
+        run: |
+          echo "Falhas encontradas na revisao automatizada."
+          exit 1
