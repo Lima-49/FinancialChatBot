@@ -3,6 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from app.tools.tools import datetime_tool, welcome_tool, bancos_tool, cartoes_tool, faturas_pendentes_tool, analyze_faturas_tool, entradas_tool, saidas_tool, balance_tool, compras_categoria_tool, insert_compra_tool
+from app.services.logs_service import log_service
 
 
 class OpenAIService:
@@ -31,5 +32,5 @@ class OpenAIService:
         try:
             return self.parser.parse(raw_response["output"])
         except Exception as e:
-            print(f"Error parsing response: {e}")
+            log_service.error(f"Erro ao parsear resposta do OpenAI: {e}", exc_info=True)
             return None

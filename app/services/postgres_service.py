@@ -1,7 +1,6 @@
 from typing import Dict
 import psycopg2
 import psycopg2.extras 
-import logging
 from contextlib import contextmanager
 import os
 from dotenv import load_dotenv
@@ -9,7 +8,14 @@ from dotenv import load_dotenv
 # Carregar variáveis de ambiente
 load_dotenv()
 
-logger = logging.getLogger(__name__)
+# Import lazy para evitar dependência circular
+def get_log_service():
+    try:
+        from app.services.logs_service import log_service
+        return log_service
+    except ImportError:
+        # Fallback para não quebrar durante inicialização
+        return None
 
 class PostgresService:
     """Serviço para interações com PostgreSQL seguindo o modelo ConfigAccountModel"""
@@ -41,7 +47,9 @@ class PostgresService:
         except Exception as e:
             if conn:
                 conn.rollback()
-            logger.error(f"Erro na conexão com o banco: {e}")
+            log_svc = get_log_service()
+            if log_svc:
+                log_svc.error(f"Erro na conexão com o banco: {e}", exc_info=True)
             raise
     
     def close(self):

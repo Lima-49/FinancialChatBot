@@ -1,13 +1,11 @@
 from typing import List, Optional
 from datetime import datetime, timedelta
-import logging
 from cryptography.fernet import Fernet
 from app.services.postgres_service import PostgresService
 from app.models.historico_de_mensagens_model import ConversationHistory, ConversationMessage
 from app.models.message_models import Message
+from app.services.logs_service import log_service
 import os
-
-logger = logging.getLogger(__name__)
 
 
 class ConversationHistoryService:
@@ -29,7 +27,7 @@ class ConversationHistoryService:
             encrypted = self.cipher.encrypt(conteudo_mensagem.encode())
             return encrypted.decode()
         except Exception as e:
-            logger.error(f"Erro ao criptografar mensagem: {e}")
+            log_service.error(f"Erro ao criptografar mensagem: {e}", exc_info=True)
             raise
     
     def _decrypt_conteudo_mensagem(self, encrypted_conteudo_mensagem: str) -> str:
@@ -38,7 +36,7 @@ class ConversationHistoryService:
             decrypted = self.cipher.decrypt(encrypted_conteudo_mensagem.encode())
             return decrypted.decode()
         except Exception as e:
-            logger.error(f"Erro ao descriptografar mensagem: {e}")
+            log_service.error(f"Erro ao descriptografar mensagem: {e}", exc_info=True)
             raise
     
     def save_message(self, numero_telefone: str, tipo_mensageiro: str, conteudo_mensagem: str) -> bool:
@@ -64,11 +62,11 @@ class ConversationHistoryService:
                     VALUES (%s, %s, %s, %s)
                 """, (numero_telefone, tipo_mensageiro, encrypted_conteudo_mensagem, datetime.now()))
                 
-            logger.info(f"Mensagem salva para {numero_telefone}")
+            log_service.info(f"Mensagem salva para {numero_telefone}")
             return True
             
         except Exception as e:
-            logger.error(f"Erro ao salvar mensagem: {e}")
+            log_service.error(f"Erro ao salvar mensagem: {e}", exc_info=True)
             return False
     
     def get_history(
@@ -127,18 +125,18 @@ class ConversationHistoryService:
                             content=decrypted_conteudo_mensagem
                         ))
                     except Exception as e:
-                        logger.error(f"Erro ao descriptografar mensagem: {e}")
+                        log_service.error(f"Erro ao descriptografar mensagem: {e}", exc_info=True)
                         continue
                 
                 # Se usou DESC, inverte para ordem cronológica
                 if not hours_back:
                     messages.reverse()
                 
-                logger.info(f"Recuperadas {len(messages)} mensagens para {numero_telefone}")
+                log_service.info(f"Recuperadas {len(messages)} mensagens para {numero_telefone}")
                 return messages
                 
         except Exception as e:
-            logger.error(f"Erro ao buscar histórico: {e}")
+            log_service.error(f"Erro ao buscar histórico: {e}", exc_info=True)
             return []
     
     def clear_old_messages(self, days_old: int = 30) -> int:
@@ -163,11 +161,11 @@ class ConversationHistoryService:
                 
                 deleted_count = cursor.rowcount
                 
-            logger.info(f"Removidas {deleted_count} mensagens antigas")
+            log_service.info(f"Removidas {deleted_count} mensagens antigas")
             return deleted_count
             
         except Exception as e:
-            logger.error(f"Erro ao limpar mensagens antigas: {e}")
+            log_service.error(f"Erro ao limpar mensagens antigas: {e}", exc_info=True)
             return 0
     
     def delete_user_history(self, numero_telefone: str) -> bool:
@@ -188,9 +186,9 @@ class ConversationHistoryService:
                     WHERE numero_telefone = %s
                 """, (numero_telefone,))
                 
-            logger.info(f"Histórico removido para {numero_telefone}")
+            log_service.info(f"Histórico removido para {numero_telefone}")
             return True
             
         except Exception as e:
-            logger.error(f"Erro ao deletar histórico: {e}")
+            log_service.error(f"Erro ao deletar histórico: {e}", exc_info=True)
             return False
