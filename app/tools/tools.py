@@ -10,6 +10,7 @@ from app.services.compras_cartao_service import ComprasCartaoService
 from app.services.categorias_service import CategoriasService
 from datetime import datetime
 import json
+import re
 
 
 def get_current_datetime(_: str = "") -> str:
@@ -273,7 +274,7 @@ def get_categorias_disponiveis(_: str = "") -> str:
         return result
     except Exception as e:
         return f"Erro ao consultar categorias: {str(e)}"
-
+    
 def get_compras_por_categoria(_: str = "") -> str:
     """Retorna análise de compras agrupadas por categoria."""
     try:
@@ -316,49 +317,124 @@ def get_compras_por_categoria(_: str = "") -> str:
     except Exception as e:
         return f"Erro ao consultar compras por categoria: {str(e)}"
 
+def _processar_parcelas(parcelas_input: str) -> str:
+    """Processa o campo de parcelas para garantir formato correto.
+    
+    Aceita formatos:
+    - "1 de 3" -> "1 de 3" (já no formato correto)
+    - "3" -> "1 de 3" (apenas número)
+    - "3x" -> "1 de 3" (formato com x)
+    - "3 vezes" -> "1 de 3" (formato por extenso)
+    - None ou vazio -> "1 de 1" (padrão)
+    
+    Retorna sempre no formato "1 de N"
+    """
+    if not parcelas_input or parcelas_input.strip() == '':
+        return '1 de 1'
+    
+    parcelas_str = str(parcelas_input).strip()
+    
+    # Se já está no formato "X de Y", retornar como está
+    if ' de ' in parcelas_str.lower():
+        return parcelas_str
+    
+    # Tentar extrair apenas o número de parcelas
+    # Aceita: "3", "3x", "3 vezes", "parcelado em 3", etc.
+    match = re.search(r'(\d+)', parcelas_str)
+    if match:
+        num_parcelas = match.group(1)
+        return f"1 de {num_parcelas}"
+    
+    # Se não conseguiu extrair, retornar padrão
+    return '1 de 1'
+
+
 def insert_compra_cartao(input_json: str) -> str:
     """Insere uma nova compra de cartão de crédito.
     
     Formato esperado (JSON):
     {
-        "id_cartao": 1,
-        "id_banco": 1,
+        "id_cartao": 1,  # OBRIGATÓRIO
+        "id_banco": 1,   # OBRIGATÓRIO
         "data_compra": "YYYY-MM-DD" | "DD/MM/YYYY" | "hoje" | "hj" (opcional, padrão hoje),
-        "estabelecimento": "Nome do estabelecimento",
-        "parcelas": "1 de 1" (opcional, padrão 1 de 1),
-        "id_categoria": 1 | null,
+        "estabelecimento": "Nome do estabelecimento",  # OBRIGATÓRIO
+        "parcelas": "1 de 3" | "3" | "3x" | "3 vezes" (opcional, padrão "1 de 1"),
+        "id_categoria": 1 | null (opcional),
         "nome_categoria": "Refeição" (opcional, usado se id não vier),
-        "valor_compra": 150.00 | "150,00",
+        "valor_compra": 150.00 | "150,00",  # OBRIGATÓRIO
         "observacoes": "Observação opcional"
     }
+    
+    IMPORTANTE: 
+    - Se parcelas não for informado, será definido como "1 de 1"
+    - Se informar apenas o número (ex: "3"), será convertido para "1 de 3"
+    - Se observacoes não for informado, será None
+    - Se id_categoria não for informado, tentará encontrar ou criar categoria baseado em nome_categoria
+    - Se nome_categoria também não for informado, tentará inferir do estabelecimento
     """
 
-    ##TODO: Ainda não está funcionando corretamente a inserção via JSON. Revisar depois.
     try:
         data = json.loads(input_json)
-        service = ComprasCartaoService()
+        compras_service = ComprasCartaoService()
+        categorias_service = CategoriasService()
         
-        # Converter data string para date object
-        from datetime import datetime
+        # Processar data
         data_compra = datetime.strptime(data['data_compra'], '%Y-%m-%d').date()
         
-        id_compra = service.insert_compra_cartao(
+        # Processar parcelas (padrão: "1 de 1")
+        parcelas_input = data.get('parcelas', '1 de 1')
+        parcelas = _processar_parcelas(parcelas_input)
+        
+        # Processar observações (padrão: None)
+        observacoes = data.get('observacoes', None)
+        
+        # Processar categoria (SEMPRE OBRIGATÓRIO)
+        id_categoria = data.get('id_categoria')
+        
+        if not id_categoria:
+            # Tentar buscar por nome_categoria
+            nome_categoria = data.get('nome_categoria')
+            
+            if nome_categoria:
+                # Buscar ou criar categoria com o nome fornecido
+                id_categoria = categorias_service.get_or_create_categoria(nome_categoria)
+            else:
+                # Tentar inferir do estabelecimento
+                estabelecimento = data['estabelecimento']
+                # Usar o nome do estabelecimento como categoria
+                id_categoria = categorias_service.get_or_create_categoria(estabelecimento)
+        
+        # Inserir a compra
+        id_compra = compras_service.insert_compra_cartao(
             id_cartao=data['id_cartao'],
             id_banco=data['id_banco'],
             data_compra=data_compra,
             estabelecimento=data['estabelecimento'],
-            parcelas=data['parcelas'],
-            id_categoria=data['id_categoria'],
+            parcelas=parcelas,
+            id_categoria=id_categoria,
             valor_compra=data['valor_compra'],
-            observacoes=data.get('observacoes')
+            observacoes=observacoes
         )
         
-        return f"✅ Compra inserida com sucesso! ID: {id_compra}"
+        # Obter nome da categoria para mensagem de confirmação
+        categoria = categorias_service.get_categoria_by_id(id_categoria)
+        nome_cat = categoria.nome_categoria if categoria else "Não identificada"
+        
+        return (
+            f"✅ Compra inserida com sucesso!\n"
+            f"ID: {id_compra}\n"
+            f"Estabelecimento: {data['estabelecimento']}\n"
+            f"Valor: R$ {data['valor_compra']:.2f}\n"
+            f"Parcelas: {parcelas}\n"
+            f"Categoria: {nome_cat}\n"
+            f"Observações: {observacoes if observacoes else 'Nenhuma'}"
+        )
     except json.JSONDecodeError:
         return "❌ Erro: JSON inválido. Verifique o formato dos dados."
+    except KeyError as e:
+        return f"❌ Erro: Campo obrigatório ausente: {str(e)}"
     except Exception as e:
         return f"❌ Erro ao inserir compra: {str(e)}"
-
 
 datetime_tool = Tool(
     name="GetCurrentDateTime",

@@ -28,6 +28,15 @@ class OpenAIService:
         return prompt
 
     def run(self, query: str, chat_history: list):
+        """Executa o agente e retorna a resposta.
+        
+        Args:
+            query: Query do usuário
+            chat_history: Histórico de conversa
+            
+        Returns:
+            ResearchResponse ou None em caso de erro
+        """
         raw_response = self.agent_executor.invoke({"query": query, "chat_history": chat_history})
         try:
             return self.parser.parse(raw_response["output"])

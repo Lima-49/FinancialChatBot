@@ -23,6 +23,21 @@ class CategoriasService():
                 row = cur.fetchone()
                 return self.categorias_model.from_dict(row) if row else None
     
+    def get_categoria_by_nome(self, nome_categoria: str) -> Optional[CategoriasModel]:
+        """Retorna uma categoria específica por nome (case-insensitive)."""
+        with self.postgres_service.get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute('SELECT * FROM "categorias_de_compras" WHERE LOWER("nome_categoria") = LOWER(%s)', (nome_categoria,))
+                row = cur.fetchone()
+                return self.categorias_model.from_dict(row) if row else None
+    
+    def get_or_create_categoria(self, nome_categoria: str) -> int:
+        """Busca categoria por nome ou cria se não existir. Retorna o ID da categoria."""
+        categoria = self.get_categoria_by_nome(nome_categoria)
+        if categoria:
+            return categoria.id_categoria
+        return self.insert_categoria(nome_categoria)
+    
     def insert_categoria(self, nome_categoria: str) -> int:
         """Insere uma nova categoria."""
         with self.postgres_service.get_connection() as conn:
