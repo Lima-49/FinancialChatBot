@@ -7,12 +7,13 @@ class FaturasCartoesDeCreditoService():
     def __init__(self):
         self.postgres_service = PostgresService()
         self.faturas_cartoes_de_credito_model = FaturasCartoesDeCreditoModel()
+        self.table_name = "faturas_cartoes_de_credito"
 
     def get_all_faturas(self) -> List[FaturasCartoesDeCreditoModel]:
         """Retorna todas as faturas."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "faturas_cartoes_de_credito"')
+                cur.execute(f'SELECT * FROM "{self.table_name}"')
                 rows = cur.fetchall()
                 return [self.faturas_cartoes_de_credito_model.from_dict(row) for row in rows]
     
@@ -20,7 +21,7 @@ class FaturasCartoesDeCreditoService():
         """Retorna uma fatura específica por ID."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "faturas_cartoes_de_credito" WHERE "id_fatura_cartao_credito" = %s', (id_fatura,))
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE "id_fatura_cartao_credito" = %s', (id_fatura,))
                 row = cur.fetchone()
                 return self.faturas_cartoes_de_credito_model.from_dict(row) if row else None
     
@@ -28,7 +29,7 @@ class FaturasCartoesDeCreditoService():
         """Retorna todas as faturas de um cartão."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "faturas_cartoes_de_credito" WHERE "id_cartao" = %s', (id_cartao,))
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE "id_cartao" = %s', (id_cartao,))
                 rows = cur.fetchall()
                 return [self.faturas_cartoes_de_credito_model.from_dict(row) for row in rows]
     
@@ -37,7 +38,7 @@ class FaturasCartoesDeCreditoService():
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    'SELECT * FROM "faturas_cartoes_de_credito" WHERE "mes_fatura" = %s AND "ano_fatura" = %s',
+                    f'SELECT * FROM "{self.table_name}" WHERE "mes_fatura" = %s AND "ano_fatura" = %s',
                     (mes, ano)
                 )
                 rows = cur.fetchall()
@@ -47,7 +48,7 @@ class FaturasCartoesDeCreditoService():
         """Retorna todas as faturas não pagas."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "faturas_cartoes_de_credito" WHERE "paga" = false')
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE "paga" = false'   )
                 rows = cur.fetchall()
                 return [self.faturas_cartoes_de_credito_model.from_dict(row) for row in rows]
     
@@ -57,7 +58,7 @@ class FaturasCartoesDeCreditoService():
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    'INSERT INTO "faturas_cartoes_de_credito" ("id_cartao", "id_banco", "mes_fatura", "ano_fatura", "valor_fatura", "paga") VALUES (%s, %s, %s, %s, %s, %s) RETURNING "id_fatura_cartao_credito"',
+                    f'INSERT INTO "{self.table_name}" ("id_cartao", "id_banco", "mes_fatura", "ano_fatura", "valor_fatura", "paga") VALUES (%s, %s, %s, %s, %s, %s) RETURNING "id_fatura_cartao_credito"',
                     (id_cartao, id_banco, mes_fatura, ano_fatura, valor_fatura, paga)
                 )
                 result = cur.fetchone()
@@ -93,7 +94,7 @@ class FaturasCartoesDeCreditoService():
             return False
         
         params.append(id_fatura)
-        query = f'UPDATE "faturas_cartoes_de_credito" SET {", ".join(updates)} WHERE "id_fatura_cartao_credito" = %s'
+        query = f'UPDATE "{self.table_name}" SET {", ".join(updates)} WHERE "id_fatura_cartao_credito" = %s'
         
         with self.get_connection() as conn:
             with conn.cursor() as cur:
@@ -104,5 +105,5 @@ class FaturasCartoesDeCreditoService():
         """Deleta uma fatura."""
         with self.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('DELETE FROM "faturas_cartoes_de_credito" WHERE "id_fatura_cartao_credito" = %s', (id_fatura,))
+                cur.execute(f'DELETE FROM "{self.table_name}" WHERE "id_fatura_cartao_credito" = %s', (id_fatura,))
                 return cur.rowcount > 0

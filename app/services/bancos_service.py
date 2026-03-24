@@ -6,12 +6,13 @@ class BancosService:
     def __init__(self):
         self.postgres_service = PostgresService()
         self.banco_model = BancosModel()
+        self.table_name = "bancos"
 
     def get_all_bancos(self) -> List[BancosModel]:
         """Retorna todos os bancos cadastrados."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "bancos"')
+                cur.execute(f'SELECT * FROM "{self.table_name}"')
                 rows = cur.fetchall()
                 return [self.banco_model.from_dict(row) for row in rows]
     
@@ -19,7 +20,7 @@ class BancosService:
         """Retorna um banco específico por ID."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "bancos" WHERE "id_banco" = %s', (id_banco,))
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE "id_banco" = %s', (id_banco,))
                 row = cur.fetchone()
                 return self.banco_model.from_dict(row) if row else None
     
@@ -28,7 +29,7 @@ class BancosService:
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    'INSERT INTO "bancos" ("nome_banco", "valor_em_conta", "valor_investido") VALUES (%s, %s, %s) RETURNING "id_banco"',
+                    f'INSERT INTO "{self.table_name}" ("nome_banco", "valor_em_conta", "valor_investido") VALUES (%s, %s, %s) RETURNING "id_banco"',
                     (nome_banco, valor_em_conta, valor_investido)
                 )
                 result = cur.fetchone()
@@ -53,7 +54,7 @@ class BancosService:
             return False
         
         params.append(id_banco)
-        query = f'UPDATE "bancos" SET {", ".join(updates)} WHERE "id_banco" = %s'
+        query = f'UPDATE "{self.table_name}" SET {", ".join(updates)} WHERE "id_banco" = %s'
         
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
@@ -64,7 +65,7 @@ class BancosService:
         """Deleta um banco."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('DELETE FROM "bancos" WHERE "id_banco" = %s', (id_banco,))
+                cur.execute(f'DELETE FROM "{self.table_name}" WHERE "id_banco" = %s', (id_banco,))
                 return cur.rowcount > 0
 
   

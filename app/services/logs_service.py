@@ -2,9 +2,8 @@ from typing import Optional, List
 from datetime import datetime, timedelta
 import traceback as tb
 import inspect
-from app.models.logs_model import LogModel, LogCreateModel
+from app.models.logs_model import LogCreateModel
 from app.services.postgres_service import PostgresService
-
 
 class LogService:
     """Serviço para gerenciar logs no Supabase"""

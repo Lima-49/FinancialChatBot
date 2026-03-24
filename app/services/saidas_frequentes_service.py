@@ -5,12 +5,13 @@ from app.models.saidas_frequentes_model import SaidasFrequentesModel
 class SaidasFrequentesService():
     def __init__(self):
         self.postgres_service = PostgresService()
+        self.table_name = "saidas_frequentes"
 
     def get_all_saidas_frequentes(self) -> List[SaidasFrequentesModel]:
         """Retorna todas as saídas frequentes."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "saidas_frequentes"')
+                cur.execute(f'SELECT * FROM "{self.table_name}"')
                 rows = cur.fetchall()
                 return [SaidasFrequentesModel.from_dict(row) for row in rows]
     
@@ -18,7 +19,7 @@ class SaidasFrequentesService():
         """Retorna uma saída frequente específica por ID."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "saidas_frequentes" WHERE "id_saida_frequente" = %s', (id_saida,))
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE "id_saida_frequente" = %s', (id_saida,))
                 row = cur.fetchone()
                 return SaidasFrequentesModel.from_dict(row) if row else None
     
@@ -27,7 +28,7 @@ class SaidasFrequentesService():
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    'INSERT INTO "saidas_frequentes" ("nome_saida", "tipo_saida", "valor_saida", "dia_saida") VALUES (%s, %s, %s, %s) RETURNING "id_saida_frequente"',
+                    f'INSERT INTO "{self.table_name}" ("nome_saida", "tipo_saida", "valor_saida", "dia_saida") VALUES (%s, %s, %s, %s) RETURNING "id_saida_frequente"',
                     (nome_saida, tipo_saida, valor_saida, dia_saida)
                 )
                 result = cur.fetchone()
@@ -55,7 +56,7 @@ class SaidasFrequentesService():
             return False
         
         params.append(id_saida)
-        query = f'UPDATE "saidas_frequentes" SET {", ".join(updates)} WHERE "id_saida_frequente" = %s'
+        query = f'UPDATE "{self.table_name}" SET {", ".join(updates)} WHERE "id_saida_frequente" = %s'
         
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
@@ -66,5 +67,5 @@ class SaidasFrequentesService():
         """Deleta uma saída frequente."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('DELETE FROM "saidas_frequentes" WHERE "id_saida_frequente" = %s', (id_saida,))
+                cur.execute(f'DELETE FROM "{self.table_name}" WHERE "id_saida_frequente" = %s', (id_saida,))
                 return cur.rowcount > 0

@@ -7,12 +7,13 @@ class ComprasCartaoService:
     def __init__(self):
         self.postgres_service = PostgresService()
         self.compras_cartoes_model = ComprasCartoesModel()
+        self.table_name = "compras_cartao"
     
     def get_all_compras_cartao(self) -> List[ComprasCartoesModel]:
         """Retorna todas as compras de cartão."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "compras_cartao"')
+                cur.execute(f'SELECT * FROM "{self.table_name}"')
                 rows = cur.fetchall()
                 return [self.compras_cartoes_model.from_dict(row) for row in rows]
     
@@ -20,7 +21,7 @@ class ComprasCartaoService:
         """Retorna uma compra específica por ID."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "compras_cartao" WHERE "id_compra_cartao" = %s', (id_compra,))
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE "id_compra_cartao" = %s', (id_compra,))
                 row = cur.fetchone()
                 return self.compras_cartoes_model.from_dict(row) if row else None
     
@@ -28,7 +29,7 @@ class ComprasCartaoService:
         """Retorna todas as compras de um cartão."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "compras_cartao" WHERE "id_cartao" = %s', (id_cartao,))
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE "id_cartao" = %s', (id_cartao,))
                 rows = cur.fetchall()
                 return [self.compras_cartoes_model.from_dict(row) for row in rows]
     
@@ -36,7 +37,7 @@ class ComprasCartaoService:
         """Retorna todas as compras de uma categoria."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "compras_cartao" WHERE "id_categoria" = %s', (id_categoria,))
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE "id_categoria" = %s', (id_categoria,))
                 rows = cur.fetchall()
                 return [self.compras_cartoes_model.from_dict(row) for row in rows]
     
@@ -46,7 +47,7 @@ class ComprasCartaoService:
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    'INSERT INTO "compras_cartao" ("id_cartao", "id_banco", "data_compra", "estabelecimento", "parcelas", "id_categoria", "valor_compra", "observacoes") VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING "id_compra_cartao"',
+                    f'INSERT INTO "{self.table_name}" ("id_cartao", "id_banco", "data_compra", "estabelecimento", "parcelas", "id_categoria", "valor_compra", "observacoes") VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING "id_compra_cartao"',
                     (id_cartao, id_banco, data_compra, estabelecimento, parcelas, id_categoria, valor_compra, observacoes)
                 )
                 result = cur.fetchone()
@@ -88,7 +89,7 @@ class ComprasCartaoService:
             return False
         
         params.append(id_compra)
-        query = f'UPDATE "compras_cartao" SET {", ".join(updates)} WHERE "id_compra_cartao" = %s'
+        query = f'UPDATE "{self.table_name}" SET {", ".join(updates)} WHERE "id_compra_cartao" = %s'
         
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
@@ -99,5 +100,5 @@ class ComprasCartaoService:
         """Deleta uma compra de cartão."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('DELETE FROM "compras_cartao" WHERE "id_compra_cartao" = %s', (id_compra,))
+                cur.execute(f'DELETE FROM "{self.table_name}" WHERE "id_compra_cartao" = %s', (id_compra,))
                 return cur.rowcount > 0

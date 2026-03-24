@@ -6,12 +6,13 @@ class EntradasService():
     def __init__(self):
         self.postgres_service = PostgresService()
         self.entradas_model = EntradasModel()
+        self.table_name = "entradas"
 
     def get_all_entradas(self) -> List[EntradasModel]:
         """Retorna todas as entradas."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "entradas"')
+                cur.execute(f'SELECT * FROM "{self.table_name}"')
                 rows = cur.fetchall()
                 return [self.entradas_model.from_dict(row) for row in rows]
     
@@ -19,7 +20,7 @@ class EntradasService():
         """Retorna uma entrada específica por ID."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "entradas" WHERE "id_entrada" = %s', (id_entrada,))
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE "id_entrada" = %s', (id_entrada,))
                 row = cur.fetchone()
                 return self.entradas_model.from_dict(row) if row else None
     
@@ -27,7 +28,7 @@ class EntradasService():
         """Retorna todas as entradas de um banco."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "entradas" WHERE "id_banco" = %s', (id_banco,))
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE "id_banco" = %s', (id_banco,))
                 rows = cur.fetchall()
                 return [self.entradas_model.from_dict(row) for row in rows]
     
@@ -36,7 +37,7 @@ class EntradasService():
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    'INSERT INTO "entradas" ("id_banco", "nome_entrada", "tipo_entrada", "valor_entrada", "dia_entrada") VALUES (%s, %s, %s, %s, %s) RETURNING "id_entrada"',
+                    f'INSERT INTO "{self.table_name}" ("id_banco", "nome_entrada", "tipo_entrada", "valor_entrada", "dia_entrada") VALUES (%s, %s, %s, %s, %s) RETURNING "id_entrada"',
                     (id_banco, nome_entrada, tipo_entrada, valor_entrada, dia_entrada)
                 )
                 result = cur.fetchone()
@@ -67,7 +68,7 @@ class EntradasService():
             return False
         
         params.append(id_entrada)
-        query = f'UPDATE "entradas" SET {", ".join(updates)} WHERE "id_entrada" = %s'
+        query = f'UPDATE "{self.table_name}" SET {", ".join(updates)} WHERE "id_entrada" = %s'
         
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
@@ -78,5 +79,5 @@ class EntradasService():
         """Deleta uma entrada."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('DELETE FROM "entradas" WHERE "id_entrada" = %s', (id_entrada,))
+                cur.execute(f'DELETE FROM "{self.table_name}" WHERE "id_entrada" = %s', (id_entrada,))
                 return cur.rowcount > 0

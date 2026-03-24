@@ -7,12 +7,13 @@ class LimitesDeComprasService():
     def __init__(self):
         self.postgres_service = PostgresService()
         self.limites_de_compras_model = LimitesDeComprasModel()
+        self.table_name = "limites_compras"
     
     def get_all_limites(self) -> List[LimitesDeComprasModel]:
         """Retorna todos os limites de compras."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "limites_compras"')
+                cur.execute(f'SELECT * FROM "{self.table_name}"')
                 rows = cur.fetchall()
                 return [self.limites_de_compras_model.from_dict(row) for row in rows]
     
@@ -20,7 +21,7 @@ class LimitesDeComprasService():
         """Retorna um limite específico por ID."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "limites_compras" WHERE "id_limite_compra" = %s', (id_limite,))
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE "id_limite_compra" = %s', (id_limite,))
                 row = cur.fetchone()
                 return self.limites_de_compras_model.from_dict(row) if row else None
     
@@ -28,7 +29,7 @@ class LimitesDeComprasService():
         """Retorna o limite de uma categoria específica."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "limites_compras" WHERE "id_categoria" = %s', (id_categoria,))
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE "id_categoria" = %s', (id_categoria,))
                 row = cur.fetchone()
                 return self.limites_de_compras_model.from_dict(row) if row else None
     
@@ -37,7 +38,7 @@ class LimitesDeComprasService():
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    'INSERT INTO "limites_compras" ("id_categoria", "limite_categoria") VALUES (%s, %s) RETURNING "id_limite_compra"',
+                    f'INSERT INTO "{self.table_name}" ("id_categoria", "limite_categoria") VALUES (%s, %s) RETURNING "id_limite_compra"',
                     (id_categoria, limite_categoria)
                 )
                 result = cur.fetchone()
@@ -60,7 +61,7 @@ class LimitesDeComprasService():
             return False
         
         params.append(id_limite)
-        query = f'UPDATE "limites_compras" SET {", ".join(updates)} WHERE "id_limite_compra" = %s'
+        query = f'UPDATE "{self.table_name}" SET {", ".join(updates)} WHERE "id_limite_compra" = %s'
         
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
@@ -71,5 +72,5 @@ class LimitesDeComprasService():
         """Deleta um limite."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('DELETE FROM "limites_compras" WHERE "id_limite_compra" = %s', (id_limite,))
+                cur.execute(f'DELETE FROM "{self.table_name}" WHERE "id_limite_compra" = %s', (id_limite,))
                 return cur.rowcount > 0

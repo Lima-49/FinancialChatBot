@@ -6,12 +6,13 @@ class CategoriasService():
     def __init__(self):
         self.postgres_service = PostgresService()
         self.categorias_model = CategoriasModel()
+        self.table_name = "categorias_de_compras"
 
     def get_all_categorias(self) -> List[CategoriasModel]:
         """Retorna todas as categorias de compras."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "categorias_de_compras"')
+                cur.execute(f'SELECT * FROM "{self.table_name}"')
                 rows = cur.fetchall()
                 return [self.categorias_model.from_dict(row) for row in rows]
     
@@ -19,7 +20,7 @@ class CategoriasService():
         """Retorna uma categoria específica por ID."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "categorias_de_compras" WHERE "id_categoria" = %s', (id_categoria,))
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE "id_categoria" = %s', (id_categoria,))
                 row = cur.fetchone()
                 return self.categorias_model.from_dict(row) if row else None
     
@@ -27,7 +28,7 @@ class CategoriasService():
         """Retorna uma categoria específica por nome (case-insensitive)."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT * FROM "categorias_de_compras" WHERE LOWER("nome_categoria") = LOWER(%s)', (nome_categoria,))
+                cur.execute(f'SELECT * FROM "{self.table_name}" WHERE LOWER("nome_categoria") = LOWER(%s)', (nome_categoria,))
                 row = cur.fetchone()
                 return self.categorias_model.from_dict(row) if row else None
     
@@ -43,7 +44,7 @@ class CategoriasService():
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    'INSERT INTO "categorias_de_compras" ("nome_categoria") VALUES (%s) RETURNING "id_categoria"',
+                    f'INSERT INTO "{self.table_name}" ("nome_categoria") VALUES (%s) RETURNING "id_categoria"',
                     (nome_categoria,)
                 )
                 result = cur.fetchone()
@@ -54,7 +55,7 @@ class CategoriasService():
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    'UPDATE "categorias_de_compras" SET "nome_categoria" = %s WHERE "id_categoria" = %s',
+                    f'UPDATE "{self.table_name}" SET "nome_categoria" = %s WHERE "id_categoria" = %s',
                     (nome_categoria, id_categoria)
                 )
                 return cur.rowcount > 0
@@ -63,5 +64,5 @@ class CategoriasService():
         """Deleta uma categoria."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute('DELETE FROM "categorias_de_compras" WHERE "id_categoria" = %s', (id_categoria,))
+                cur.execute(f'DELETE FROM "{self.table_name}" WHERE "id_categoria" = %s', (id_categoria,))
                 return cur.rowcount > 0

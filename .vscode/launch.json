@@ -12,7 +12,8 @@
             "module": "flask",
             "env": {
                 "FLASK_APP": "main.py",
-                "FLASK_DEBUG": "1"
+                "FLASK_DEBUG": "1",
+                "FLASK_TEST_MODE": "true"
             },
             "args": [
                 "run",

@@ -11,6 +11,11 @@ from app.services.categorias_service import CategoriasService
 from datetime import datetime
 import json
 import re
+from typing import Dict, Any
+
+# Dicionário para armazenar compras pendentes de aprovação
+# Estrutura: {phone_number: {compra_data, timestamp}}
+pending_purchases: Dict[str, Dict[str, Any]] = {}
 
 
 def get_current_datetime(_: str = "") -> str:
@@ -349,6 +354,187 @@ def _processar_parcelas(parcelas_input: str) -> str:
     return '1 de 1'
 
 
+def prepare_compra_cartao(input_json: str) -> str:
+    """Prepara uma compra de cartão para aprovação do usuário.
+    
+    Formato esperado (JSON):
+    {
+        "phone_number": "whatsapp:+5511999999999",  # OBRIGATÓRIO para identificar usuário
+        "id_cartao": 1,  # OBRIGATÓRIO
+        "id_banco": 1,   # OBRIGATÓRIO
+        "data_compra": "YYYY-MM-DD" | "DD/MM/YYYY" | "hoje" | "hj" (opcional, padrão hoje),
+        "estabelecimento": "Nome do estabelecimento",  # OBRIGATÓRIO
+        "parcelas": "1 de 3" | "3" | "3x" | "3 vezes" (opcional, padrão "1 de 1"),
+        "id_categoria": 1 | null (opcional),
+        "nome_categoria": "Refeição" (opcional, usado se id não vier),
+        "valor_compra": 150.00 | "150,00",  # OBRIGATÓRIO
+        "observacoes": "Observação opcional"
+    }
+    
+    Esta tool NÃO salva a compra no banco. Ela apenas prepara os dados e solicita confirmação.
+    """
+    try:
+        data = json.loads(input_json)
+        categorias_service = CategoriasService()
+        cartoes_service = CartoesCreditoService()
+        
+        # Validar campos obrigatórios
+        phone_number = data.get('phone_number')
+        if not phone_number:
+            return "❌ Erro: número de telefone não fornecido. Não é possível armazenar compra para confirmação."
+        
+        # Processar data
+        data_compra_input = data.get('data_compra', datetime.now().strftime('%Y-%m-%d'))
+        if data_compra_input.lower() in ['hoje', 'hj']:
+            data_compra = datetime.now().date()
+        else:
+            try:
+                data_compra = datetime.strptime(data_compra_input, '%Y-%m-%d').date()
+            except:
+                try:
+                    data_compra = datetime.strptime(data_compra_input, '%d/%m/%Y').date()
+                except:
+                    data_compra = datetime.now().date()
+        
+        # Processar parcelas
+        parcelas_input = data.get('parcelas', '1 de 1')
+        parcelas = _processar_parcelas(parcelas_input)
+        
+        # Processar observações
+        observacoes = data.get('observacoes', None)
+        
+        # Processar categoria
+        id_categoria = data.get('id_categoria')
+        nome_categoria_final = ""
+        
+        if not id_categoria:
+            nome_categoria = data.get('nome_categoria')
+            if nome_categoria:
+                id_categoria = categorias_service.get_or_create_categoria(nome_categoria)
+                nome_categoria_final = nome_categoria
+            else:
+                estabelecimento = data['estabelecimento']
+                id_categoria = categorias_service.get_or_create_categoria(estabelecimento)
+                nome_categoria_final = estabelecimento
+        else:
+            categoria = categorias_service.get_categoria_by_id(id_categoria)
+            nome_categoria_final = categoria.nome_categoria if categoria else "Não identificada"
+        
+        # Obter nome do cartão
+        cartao = cartoes_service.get_cartao_by_id(data['id_cartao'])
+        nome_cartao = cartao.nome_cartao if cartao else f"Cartão ID {data['id_cartao']}"
+        
+        # Armazenar compra pendente
+        compra_data = {
+            'id_cartao': data['id_cartao'],
+            'id_banco': data['id_banco'],
+            'data_compra': data_compra.strftime('%Y-%m-%d'),
+            'estabelecimento': data['estabelecimento'],
+            'parcelas': parcelas,
+            'id_categoria': id_categoria,
+            'valor_compra': float(data['valor_compra']),
+            'observacoes': observacoes,
+            'timestamp': datetime.now().isoformat()
+        }
+        
+        pending_purchases[phone_number] = compra_data
+        
+        # Retornar resumo para aprovação
+        valor_formatado = f"R$ {data['valor_compra']:.2f}".replace('.', ',')
+        data_formatada = data_compra.strftime('%d/%m/%Y')
+        
+        return (
+            f"📝 **CONFIRMAR COMPRA**\n\n"
+            f"🏪 Estabelecimento: {data['estabelecimento']}\n"
+            f"💳 Cartão: {nome_cartao}\n"
+            f"💰 Valor: {valor_formatado}\n"
+            f"📅 Data: {data_formatada}\n"
+            f"🔢 Parcelas: {parcelas}\n"
+            f"📦 Categoria: {nome_categoria_final}\n"
+            f"📝 Observações: {observacoes if observacoes else 'Nenhuma'}\n\n"
+            f"✅ Digite 'confirmar' ou 'sim' para salvar esta compra.\n"
+            f"❌ Digite 'cancelar' ou 'não' para descartar."
+        )
+    except json.JSONDecodeError:
+        return "❌ Erro: JSON inválido. Verifique o formato dos dados."
+    except KeyError as e:
+        return f"❌ Erro: Campo obrigatório ausente: {str(e)}"
+    except Exception as e:
+        return f"❌ Erro ao preparar compra: {str(e)}"
+
+
+def confirm_compra_cartao(input_json: str) -> str:
+    """Confirma e salva a compra pendente do usuário.
+    
+    Formato esperado (JSON):
+    {
+        "phone_number": "whatsapp:+5511999999999",  # OBRIGATÓRIO
+        "confirmed": true | false  # true para salvar, false para cancelar
+    }
+    """
+    try:
+        data = json.loads(input_json)
+        phone_number = data.get('phone_number')
+        confirmed = data.get('confirmed', False)
+        
+        if not phone_number:
+            return "❌ Erro: número de telefone não fornecido."
+        
+        # Verificar se há compra pendente
+        if phone_number not in pending_purchases:
+            return "⚠️ Não há compra pendente de aprovação. Por favor, adicione uma compra primeiro."
+        
+        # Se cancelado
+        if not confirmed:
+            del pending_purchases[phone_number]
+            return "❌ Compra cancelada e descartada."
+        
+        # Recuperar compra pendente
+        compra_data = pending_purchases[phone_number]
+        
+        # Salvar no banco
+        compras_service = ComprasCartaoService()
+        categorias_service = CategoriasService()
+        
+        data_compra = datetime.strptime(compra_data['data_compra'], '%Y-%m-%d').date()
+        
+        id_compra = compras_service.insert_compra_cartao(
+            id_cartao=compra_data['id_cartao'],
+            id_banco=compra_data['id_banco'],
+            data_compra=data_compra,
+            estabelecimento=compra_data['estabelecimento'],
+            parcelas=compra_data['parcelas'],
+            id_categoria=compra_data['id_categoria'],
+            valor_compra=compra_data['valor_compra'],
+            observacoes=compra_data['observacoes']
+        )
+        
+        # Limpar compra pendente
+        del pending_purchases[phone_number]
+        
+        # Obter nome da categoria
+        categoria = categorias_service.get_categoria_by_id(compra_data['id_categoria'])
+        nome_cat = categoria.nome_categoria if categoria else "Não identificada"
+        
+        valor_formatado = f"R$ {compra_data['valor_compra']:.2f}".replace('.', ',')
+        
+        return (
+            f"✅ **COMPRA SALVA COM SUCESSO!**\n\n"
+            f"🆔 ID: {id_compra}\n"
+            f"🏪 Estabelecimento: {compra_data['estabelecimento']}\n"
+            f"💰 Valor: {valor_formatado}\n"
+            f"🔢 Parcelas: {compra_data['parcelas']}\n"
+            f"📦 Categoria: {nome_cat}\n"
+            f"📝 Observações: {compra_data['observacoes'] if compra_data['observacoes'] else 'Nenhuma'}"
+        )
+    except json.JSONDecodeError:
+        return "❌ Erro: JSON inválido. Verifique o formato dos dados."
+    except KeyError as e:
+        return f"❌ Erro: Campo obrigatório ausente: {str(e)}"
+    except Exception as e:
+        return f"❌ Erro ao confirmar compra: {str(e)}"
+
+
 def insert_compra_cartao(input_json: str) -> str:
     """Insere uma nova compra de cartão de crédito.
     
@@ -519,14 +705,38 @@ compras_categoria_tool = Tool(
     )
 )
 
+prepare_compra_tool = Tool(
+    name="PrepareCompraCartao",
+    func=prepare_compra_cartao,
+    description=(
+        "SEMPRE use esta tool PRIMEIRO quando o usuário quiser adicionar uma compra. "
+        "Esta tool prepara a compra e mostra um resumo para o usuário aprovar. "
+        "NÃO salva no banco - apenas prepara e aguarda confirmação. "
+        "Formato JSON: {phone_number (obrigatório), id_cartao, id_banco, estabelecimento, valor_compra, "
+        "data_compra(opcional), parcelas(opcional), nome_categoria(opcional), observacoes(opcional)}. "
+        "Depois de usar esta tool, aguarde o usuário confirmar ou cancelar."
+    )
+)
+
+confirm_compra_tool = Tool(
+    name="ConfirmCompraCartao",
+    func=confirm_compra_cartao,
+    description=(
+        "Use esta tool quando o usuário confirmar ou cancelar uma compra pendente. "
+        "Procure por palavras como 'sim', 'confirmar', 'ok', 'salvar' para confirmed=true. "
+        "Procure por palavras como 'não', 'cancelar' para confirmed=false. "
+        "Formato JSON: {phone_number (obrigatório), confirmed (boolean)}. "
+        "Esta tool salva a compra no banco se confirmed=true, ou descarta se confirmed=false."
+    )
+)
+
 insert_compra_tool = Tool(
     name="InsertCompraCartao",
     func=insert_compra_cartao,
     description=(
-        "Insere uma nova compra de cartão no banco de dados. "
-        "SEMPRE use esta tool para registrar compras - NÃO pergunte ao usuário sobre categorias. "
-        "Se a categoria não for informada, a tool infere automaticamente do estabelecimento ou cria uma nova. "
-        "Formato JSON: {id_cartao, id_banco, data_compra(opcional, padrão hoje), estabelecimento, parcelas(opcional), nome_categoria(opcional), valor_compra, observacoes(opcional)}. "
-        "A tool retornará confirmação com todos os detalhes da compra inserida."
+        "DEPRECATED: Use PrepareCompraCartao + ConfirmCompraCartao ao invés desta. "
+        "Esta tool ainda existe para compatibilidade, mas o fluxo correto é: "
+        "1) PrepareCompraCartao para mostrar resumo ao usuário "
+        "2) ConfirmCompraCartao para salvar após aprovação."
     )
 )

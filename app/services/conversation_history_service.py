@@ -7,7 +7,6 @@ from app.models.message_models import Message
 from app.services.logs_service import log_service
 import os
 
-
 class ConversationHistoryService:
     """Serviço para gerenciar histórico de conversas com criptografia"""
     
@@ -20,6 +19,7 @@ class ConversationHistoryService:
         
         # Inicializa o cipher para criptografia/descriptografia
         self.cipher = Fernet(self.encryption_key.encode())
+        self.table_name = "historico_de_mensagens"
     
     def _encrypt_conteudo_mensagem(self, conteudo_mensagem: str) -> str:
         """Criptografa o conteúdo da mensagem"""
@@ -56,8 +56,8 @@ class ConversationHistoryService:
             
             with self.db.get_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
-                    INSERT INTO historico_de_mensagens 
+                cursor.execute(f"""
+                    INSERT INTO {self.table_name} 
                     (numero_telefone, tipo_mensageiro, conteudo_mensagem, data_criacao)
                     VALUES (%s, %s, %s, %s)
                 """, (numero_telefone, tipo_mensageiro, encrypted_conteudo_mensagem, datetime.now()))
@@ -92,18 +92,18 @@ class ConversationHistoryService:
                 
                 if hours_back:
                     time_filter = datetime.now() - timedelta(hours=hours_back)
-                    cursor.execute("""
+                    cursor.execute(f"""
                         SELECT tipo_mensageiro, conteudo_mensagem, data_criacao
-                        FROM historico_de_mensagens
+                        FROM {self.table_name}
                         WHERE numero_telefone = %s 
                         AND data_criacao >= %s
                         ORDER BY data_criacao ASC
                         LIMIT %s
                     """, (numero_telefone, time_filter, limit))
                 else:
-                    cursor.execute("""
+                    cursor.execute(f"""
                         SELECT tipo_mensageiro, conteudo_mensagem, data_criacao
-                        FROM historico_de_mensagens
+                        FROM {self.table_name}
                         WHERE numero_telefone = %s
                         ORDER BY data_criacao DESC
                         LIMIT %s
@@ -154,8 +154,8 @@ class ConversationHistoryService:
             
             with self.db.get_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
-                    DELETE FROM historico_de_mensagens
+                cursor.execute(f"""
+                    DELETE FROM {self.table_name}
                     WHERE data_criacao < %s
                 """, (cutoff_date,))
                 
@@ -181,8 +181,8 @@ class ConversationHistoryService:
         try:
             with self.db.get_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
-                    DELETE FROM historico_de_mensagens
+                cursor.execute(f"""
+                    DELETE FROM {self.table_name}
                     WHERE numero_telefone = %s
                 """, (numero_telefone,))
                 
