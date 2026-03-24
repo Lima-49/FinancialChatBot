@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from cryptography.fernet import Fernet
 from app.services.postgres_service import PostgresService
 from app.models.historico_de_mensagens_model import ConversationHistory, ConversationMessage
-from app.models.message_models import Message
+from app.models.message_model import Message
 from app.services.logs_service import log_service
 import os
 

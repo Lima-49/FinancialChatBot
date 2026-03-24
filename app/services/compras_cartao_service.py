@@ -41,21 +41,23 @@ class ComprasCartaoService:
                 rows = cur.fetchall()
                 return [self.compras_cartoes_model.from_dict(row) for row in rows]
     
-    def insert_compra_cartao(self, id_cartao: int, id_banco: int, data_compra: date, estabelecimento: str, 
-                             parcelas: str, id_categoria: int, valor_compra: float, observacoes: str = None) -> int:
+    def insert_compra_cartao(self, id_cartao: int, data_compra: date, estabelecimento: str,
+                             id_categoria: int, valor_compra: float, observacoes: str = None,
+                             numero_parcelas: int = 1, parcela_atual: int = 1) -> int:
         """Insere uma nova compra de cartão."""
         with self.postgres_service.get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    f'INSERT INTO "{self.table_name}" ("id_cartao", "id_banco", "data_compra", "estabelecimento", "parcelas", "id_categoria", "valor_compra", "observacoes") VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING "id_compra_cartao"',
-                    (id_cartao, id_banco, data_compra, estabelecimento, parcelas, id_categoria, valor_compra, observacoes)
+                    f'INSERT INTO "{self.table_name}" ("id_cartao", "data_compra", "estabelecimento", "id_categoria", "valor_compra", "observacoes", "numero_parcelas", "parcela_atual") VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING "id_compra_cartao"',
+                    (id_cartao, data_compra, estabelecimento, id_categoria, valor_compra, observacoes, numero_parcelas, parcela_atual)
                 )
                 result = cur.fetchone()
                 return result['id_compra_cartao'] if isinstance(result, dict) else result[0]
     
-    def update_compra_cartao(self, id_compra: int, id_cartao: int = None, id_banco: int = None, data_compra: date = None, 
-                            estabelecimento: str = None, parcelas: str = None, id_categoria: int = None, 
-                            valor_compra: float = None, observacoes: str = None) -> bool:
+    def update_compra_cartao(self, id_compra: int, id_cartao: int = None, data_compra: date = None, 
+                            estabelecimento: str = None, id_categoria: int = None, 
+                            valor_compra: float = None, observacoes: str = None,
+                            numero_parcelas: int = None, parcela_atual: int = None) -> bool:
         """Atualiza dados de uma compra de cartão."""
         updates = []
         params = []
@@ -63,18 +65,12 @@ class ComprasCartaoService:
         if id_cartao is not None:
             updates.append('"id_cartao" = %s')
             params.append(id_cartao)
-        if id_banco is not None:
-            updates.append('"id_banco" = %s')
-            params.append(id_banco)
         if data_compra is not None:
             updates.append('"data_compra" = %s')
             params.append(data_compra)
         if estabelecimento is not None:
             updates.append('"estabelecimento" = %s')
             params.append(estabelecimento)
-        if parcelas is not None:
-            updates.append('"parcelas" = %s')
-            params.append(parcelas)
         if id_categoria is not None:
             updates.append('"id_categoria" = %s')
             params.append(id_categoria)
@@ -84,6 +80,12 @@ class ComprasCartaoService:
         if observacoes is not None:
             updates.append('"observacoes" = %s')
             params.append(observacoes)
+        if numero_parcelas is not None:
+            updates.append('"numero_parcelas" = %s')
+            params.append(numero_parcelas)
+        if parcela_atual is not None:
+            updates.append('"parcela_atual" = %s')
+            params.append(parcela_atual)
         
         if not updates:
             return False

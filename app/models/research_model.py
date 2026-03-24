@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from app.models.message_models import Message
+from app.models.message_model import Message
 
 class ResearchRequest(BaseModel):
     query: str

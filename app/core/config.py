@@ -25,10 +25,10 @@ def get_site_config_url() -> str:
 
 def generate_encryption_key() -> str:
     """
-    Gera uma nova chave de criptografia Fernet.
-    Execute esta função UMA VEZ e salve o resultado no .env
+    Generates a new Fernet encryption key.
+    Run this function ONCE and save the result in .env
     
-    Exemplo de uso:
+    Example usage:
     >>> from app.core.config import generate_encryption_key
     >>> print(generate_encryption_key())
     """

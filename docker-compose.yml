@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/financial_control
+      - FLASK_ENV=development
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    command: python main.py
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=financial_control
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

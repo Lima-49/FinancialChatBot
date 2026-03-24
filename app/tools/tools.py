@@ -2,10 +2,10 @@ from langchain_community.tools import Tool
 from app.core.config import get_site_config_url
 from app.services.postgres_service import PostgresService
 from app.services.bancos_service import BancosService
-from app.services.cartoes_credito_service import CartoesCreditoService
+from app.services.cartoes_service import CartoesService
 from app.services.faturas_cartoes_de_credito_service import FaturasCartoesDeCreditoService
 from app.services.entradas_service import EntradasService
-from app.services.saidas_frequentes_service import SaidasFrequentesService
+from app.services.saidas_realizadas_service import SaidasRealizadasService
 from app.services.compras_cartao_service import ComprasCartaoService
 from app.services.categorias_service import CategoriasService
 from datetime import datetime
@@ -86,7 +86,7 @@ def get_bancos_info(_: str = "") -> str:
 def get_cartoes_info(_: str = "") -> str:
     """Retorna informações sobre todos os cartões de crédito."""
     try:
-        service = CartoesCreditoService()
+        service = CartoesService()
         cartoes = service.get_all_cartoes()
         
         if not cartoes:
@@ -134,7 +134,7 @@ def analyze_faturas_por_cartao(_: str = "") -> str:
     """Analisa e compara faturas por cartão, mostrando qual cartão tem maior fatura."""
     try:
         faturas_cartoes_service = FaturasCartoesDeCreditoService()
-        cartoes_service =  CartoesCreditoService()
+        cartoes_service =  CartoesService()
         faturas = faturas_cartoes_service.get_all_faturas()
         cartoes = cartoes_service.get_all_cartoes()
         
@@ -204,17 +204,17 @@ def get_entradas_info(_: str = "") -> str:
 def get_saidas_info(_: str = "") -> str:
     """Retorna informações sobre todas as saídas frequentes."""
     try:
-        service = SaidasFrequentesService()
-        saidas = service.get_all_saidas_frequentes()
+        service = SaidasRealizadasService()
+        saidas = service.get_all_saidas_realizadas()
         
         if not saidas:
-            return "Nenhuma saída frequente cadastrada."
+            return "Nenhuma saída realizada cadastrada."
         
-        result = "💸 **SAÍDAS FREQUENTES**\n\n"
+        result = "💸 **SAÍDAS REALIZADAS**\n\n"
         total = 0
         
         for saida in saidas:
-            result += f"❌ {saida.nome_saida} (ID: {saida.id_saida_frequente})\n"
+            result += f"❌ {saida.descricao} (ID: {saida.id_saida})\n"
             result += f"   Tipo: {saida.tipo_saida}\n"
             result += f"   Valor: R$ {saida.valor_saida:.2f}\n"
             result += f"   Dia de saída: {saida.dia_saida}\n\n"
@@ -230,10 +230,10 @@ def analyze_balance(_: str = "") -> str:
     """Analisa o balanço financeiro entre entradas e saídas."""
     try:
         entrada_service = EntradasService()
-        saida_service = SaidasFrequentesService()
+        saida_service = SaidasRealizadasService()
         faturas_service = FaturasCartoesDeCreditoService()
         entradas = entrada_service.get_all_entradas()
-        saidas = saida_service.get_all_saidas_frequentes()
+        saidas = saida_service.get_all_saidas_realizadas()
         faturas_pendentes = faturas_service.get_faturas_nao_pagas()
         
         total_entradas = sum(e.valor_entrada for e in entradas)
@@ -376,7 +376,7 @@ def prepare_compra_cartao(input_json: str) -> str:
     try:
         data = json.loads(input_json)
         categorias_service = CategoriasService()
-        cartoes_service = CartoesCreditoService()
+        cartoes_service = CartoesService()
         
         # Validar campos obrigatórios
         phone_number = data.get('phone_number')
@@ -500,13 +500,13 @@ def confirm_compra_cartao(input_json: str) -> str:
         
         id_compra = compras_service.insert_compra_cartao(
             id_cartao=compra_data['id_cartao'],
-            id_banco=compra_data['id_banco'],
             data_compra=data_compra,
             estabelecimento=compra_data['estabelecimento'],
-            parcelas=compra_data['parcelas'],
             id_categoria=compra_data['id_categoria'],
             valor_compra=compra_data['valor_compra'],
-            observacoes=compra_data['observacoes']
+            observacoes=compra_data['observacoes'],
+            numero_parcelas=compra_data['numero_parcelas'] if 'numero_parcelas' in compra_data else 1,
+            parcela_atual=compra_data['parcela_atual'] if 'parcela_atual' in compra_data else 1
         )
         
         # Limpar compra pendente
@@ -592,15 +592,15 @@ def insert_compra_cartao(input_json: str) -> str:
         
         # Inserir a compra
         id_compra = compras_service.insert_compra_cartao(
-            id_cartao=data['id_cartao'],
-            id_banco=data['id_banco'],
-            data_compra=data_compra,
-            estabelecimento=data['estabelecimento'],
-            parcelas=parcelas,
-            id_categoria=id_categoria,
-            valor_compra=data['valor_compra'],
-            observacoes=observacoes
-        )
+                id_cartao=data['id_cartao'],
+                data_compra=data_compra,
+                estabelecimento=data['estabelecimento'],
+                id_categoria=id_categoria,
+                valor_compra=data['valor_compra'],
+                observacoes=data['observacoes'],
+                numero_parcelas=data['numero_parcelas'] if 'numero_parcelas' in data else 1,
+                parcela_atual=data['parcela_atual'] if 'parcela_atual' in data else 1
+            )
         
         # Obter nome da categoria para mensagem de confirmação
         categoria = categorias_service.get_categoria_by_id(id_categoria)

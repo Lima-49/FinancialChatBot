@@ -5,7 +5,7 @@ class CardType(Enum):
     CREDITO = 1
     CREDITO_E_DEBITO = 2
     
-class CartoesCreditoModel:
+class CartoesModel:
     """Modelo de dados para cartões de crédito."""    
     def __init__(self, nome_cartao=None, tipo_cartao=None, dia_vencimento=None, id_cartao=None, id_banco=None):
         self.id_cartao = id_cartao

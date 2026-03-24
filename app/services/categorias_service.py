@@ -6,7 +6,7 @@ class CategoriasService():
     def __init__(self):
         self.postgres_service = PostgresService()
         self.categorias_model = CategoriasModel()
-        self.table_name = "categorias_de_compras"
+        self.table_name = "categorias"
 
     def get_all_categorias(self) -> List[CategoriasModel]:
         """Retorna todas as categorias de compras."""
