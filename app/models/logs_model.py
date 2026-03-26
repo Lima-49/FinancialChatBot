@@ -1,10 +1,12 @@
-from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
+
+from pydantic import BaseModel
 
 
 class LogModel(BaseModel):
     """Modelo para registros de log"""
+
     id: Optional[int] = None
     nivel: str  # ERROR, INFO, WARNING, DEBUG, CRITICAL
     mensagem: str
@@ -20,6 +22,7 @@ class LogModel(BaseModel):
 
 class LogCreateModel(BaseModel):
     """Modelo para criar novos logs"""
+
     nivel: str
     mensagem: str
     modulo: Optional[str] = None

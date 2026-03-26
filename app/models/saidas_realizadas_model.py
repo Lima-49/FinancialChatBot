@@ -1,5 +1,14 @@
 class SaidasRealizadasModel:
-    def __init__(self, id_banco=None, data_saida=None, valor=None, id_categoria=None, id_saida=None, descricao=None, created_at=None):
+    def __init__(
+        self,
+        id_banco=None,
+        data_saida=None,
+        valor=None,
+        id_categoria=None,
+        id_saida=None,
+        descricao=None,
+        created_at=None,
+    ):
         self.id_saida = id_saida
         self.id_categoria = id_categoria
         self.id_banco = id_banco
@@ -12,13 +21,13 @@ class SaidasRealizadasModel:
     def from_dict(cls, data):
         """Converte dicionário do banco de dados em objeto do modelo."""
         return cls(
-            id_saida=data.get('id_saida'),
-            id_categoria=data.get('id_categoria'),
-            id_banco=data.get('id_banco'),
-            data_saida=data.get('data_saida'),
-            valor=data.get('valor'),
-            descricao=data.get('descricao'),
-            created_at=data.get('created_at'),
+            id_saida=data.get("id_saida"),
+            id_categoria=data.get("id_categoria"),
+            id_banco=data.get("id_banco"),
+            data_saida=data.get("data_saida"),
+            valor=data.get("valor"),
+            descricao=data.get("descricao"),
+            created_at=data.get("created_at"),
         )
 
     def to_dict(self):

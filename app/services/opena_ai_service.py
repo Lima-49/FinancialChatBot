@@ -1,9 +1,25 @@
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
+from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.output_parsers import PydanticOutputParser
-from langchain.agents import create_tool_calling_agent, AgentExecutor
-from app.tools.tools import datetime_tool, welcome_tool, bancos_tool, cartoes_tool, faturas_pendentes_tool, analyze_faturas_tool, entradas_tool, saidas_tool, balance_tool, compras_categoria_tool, prepare_compra_tool, confirm_compra_tool, insert_compra_tool, categorias_tool
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+
 from app.services.logs_service import log_service
+from app.tools.tools import (
+    analyze_faturas_tool,
+    balance_tool,
+    bancos_tool,
+    cartoes_tool,
+    categorias_tool,
+    compras_categoria_tool,
+    confirm_compra_tool,
+    datetime_tool,
+    entradas_tool,
+    faturas_pendentes_tool,
+    insert_compra_tool,
+    prepare_compra_tool,
+    saidas_tool,
+    welcome_tool,
+)
 
 
 class OpenAIService:
@@ -11,33 +27,58 @@ class OpenAIService:
         self.llm = ChatOpenAI(model="gpt-4.1", temperature=0.1)
         self.chat_prompt = chat_prompt
         self.parser = PydanticOutputParser(pydantic_object=parser)
-        self.tools = [datetime_tool, welcome_tool, bancos_tool, cartoes_tool, faturas_pendentes_tool, analyze_faturas_tool, entradas_tool, saidas_tool, balance_tool, categorias_tool, compras_categoria_tool, prepare_compra_tool, confirm_compra_tool, insert_compra_tool]
+        self.tools = [
+            datetime_tool,
+            welcome_tool,
+            bancos_tool,
+            cartoes_tool,
+            faturas_pendentes_tool,
+            analyze_faturas_tool,
+            entradas_tool,
+            saidas_tool,
+            balance_tool,
+            categorias_tool,
+            compras_categoria_tool,
+            prepare_compra_tool,
+            confirm_compra_tool,
+            insert_compra_tool,
+        ]
         self.prompt = self.init_prompt()
-        agent = create_tool_calling_agent(llm=self.llm, prompt=self.prompt, tools=self.tools)
-        self.agent_executor = AgentExecutor(agent=agent, tools=self.tools, verbose=True, return_intermediate_steps=True)
+        agent = create_tool_calling_agent(
+            llm=self.llm, prompt=self.prompt, tools=self.tools
+        )
+        self.agent_executor = AgentExecutor(
+            agent=agent, tools=self.tools, verbose=True, return_intermediate_steps=True
+        )
 
     def init_prompt(self):
         prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system",self.chat_prompt,),
-            ("placeholder", "{chat_history}"),  
-            ("human", "{query}"),
-            ("placeholder", "{agent_scratchpad}"),
-        ]).partial(format_instructions=self.parser.get_format_instructions())
-        
+            [
+                (
+                    "system",
+                    self.chat_prompt,
+                ),
+                ("placeholder", "{chat_history}"),
+                ("human", "{query}"),
+                ("placeholder", "{agent_scratchpad}"),
+            ]
+        ).partial(format_instructions=self.parser.get_format_instructions())
+
         return prompt
 
     def run(self, query: str, chat_history: list):
         """Executa o agente e retorna a resposta.
-        
+
         Args:
             query: Query do usuário
             chat_history: Histórico de conversa
-            
+
         Returns:
             ResearchResponse ou None em caso de erro
         """
-        raw_response = self.agent_executor.invoke({"query": query, "chat_history": chat_history})
+        raw_response = self.agent_executor.invoke(
+            {"query": query, "chat_history": chat_history}
+        )
         try:
             return self.parser.parse(raw_response["output"])
         except Exception as e:

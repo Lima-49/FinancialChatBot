@@ -1,5 +1,18 @@
 class ComprasCartoesModel:
-    def __init__(self, data_compra=None, estabelecimento=None, id_categoria=None, valor_compra=None, observacoes=None, id_compra_cartao=None, id_cartao=None, id_banco=None, numero_parcelas=1, parcela_atual=1, created_at=None):
+    def __init__(
+        self,
+        data_compra=None,
+        estabelecimento=None,
+        id_categoria=None,
+        valor_compra=None,
+        observacoes=None,
+        id_compra_cartao=None,
+        id_cartao=None,
+        id_banco=None,
+        numero_parcelas=1,
+        parcela_atual=1,
+        created_at=None,
+    ):
         self.id_compra_cartao = id_compra_cartao
         self.id_cartao = id_cartao
         self.id_banco = id_banco
@@ -16,17 +29,17 @@ class ComprasCartoesModel:
     def from_dict(cls, data):
         """Converte dicionário do banco de dados em objeto do modelo."""
         return cls(
-            id_compra_cartao=data.get('id_compra_cartao'),
-            id_cartao=data.get('id_cartao'),
-            id_banco=data.get('id_banco'),
-            data_compra=data.get('data_compra'),
-            estabelecimento=data.get('estabelecimento'),
-            numero_parcelas=data.get('numero_parcelas', data.get('parcelas', 1)),
-            parcela_atual=data.get('parcela_atual', 1),
-            id_categoria=data.get('id_categoria'),
-            valor_compra=data.get('valor_compra'),
-            observacoes=data.get('observacoes'),
-            created_at=data.get('created_at') or data.get('created_at')
+            id_compra_cartao=data.get("id_compra_cartao"),
+            id_cartao=data.get("id_cartao"),
+            id_banco=data.get("id_banco"),
+            data_compra=data.get("data_compra"),
+            estabelecimento=data.get("estabelecimento"),
+            numero_parcelas=data.get("numero_parcelas", data.get("parcelas", 1)),
+            parcela_atual=data.get("parcela_atual", 1),
+            id_categoria=data.get("id_categoria"),
+            valor_compra=data.get("valor_compra"),
+            observacoes=data.get("observacoes"),
+            created_at=data.get("created_at") or data.get("created_at"),
         )
 
     def to_dict(self):

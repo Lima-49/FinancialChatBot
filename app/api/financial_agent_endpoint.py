@@ -1,11 +1,12 @@
 from flask import Blueprint, request
 from twilio.twiml.messaging_response import MessagingResponse
-from app.models.message_model import convert_history
-from app.models.research_model import ResearchResponse
-from app.services.opena_ai_service import OpenAIService
-from app.services.conversation_history_service import ConversationHistoryService
+
 from app.core.config import log_error_to_file
 from app.core.prompts import research_prompt
+from app.models.message_model import convert_history
+from app.models.research_model import ResearchResponse
+from app.services.conversation_history_service import ConversationHistoryService
+from app.services.opena_ai_service import OpenAIService
 
 financial_agent_bp = Blueprint("financialAgent", __name__)
 
@@ -36,9 +37,7 @@ def bot():
 
         # Recupera o histórico do banco de dados (últimas 10 mensagens das últimas 24h)
         chat_history = conversation_service.get_history(
-            numero_telefone=phone_number,
-            limit=10,
-            hours_back=24
+            numero_telefone=phone_number, limit=10, hours_back=24
         )
 
         # Converte para o formato esperado pelo LangChain
@@ -48,14 +47,16 @@ def bot():
         conversation_service.save_message(
             numero_telefone=phone_number,
             tipo_mensageiro="user",
-            conteudo_mensagem=incoming_msg
+            conteudo_mensagem=incoming_msg,
         )
 
         # Processa a mensagem com o agente
         result = research_service.run(incoming_msg, formatted_history)
 
         if not result:
-            msg.body("Não consegui gerar uma resposta agora. Tente novamente mais tarde.")
+            msg.body(
+                "Não consegui gerar uma resposta agora. Tente novamente mais tarde."
+            )
             return str(resp)
 
         response_text = result.summary
@@ -64,7 +65,7 @@ def bot():
         conversation_service.save_message(
             numero_telefone=phone_number,
             tipo_mensageiro="assistant",
-            conteudo_mensagem=response_text
+            conteudo_mensagem=response_text,
         )
 
         # Default to Twilio response

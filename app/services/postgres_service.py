@@ -1,29 +1,33 @@
-from typing import Dict
-import psycopg2
-import psycopg2.extras 
-from contextlib import contextmanager
 import os
+from contextlib import contextmanager
+from typing import Dict
+
+import psycopg2
+import psycopg2.extras
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
+
 # Lazy import to avoid circular dependency
 def get_log_service():
     try:
         from app.services.logs_service import log_service
+
         return log_service
     except ImportError:
         # Fallback to not break during initialization
         return None
 
+
 class PostgresService:
     """Service for PostgreSQL interactions following the ConfigAccountModel"""
-    
+
     def __init__(self):
         self.database_url = os.getenv("DATABASE_URL")
         self._connection = None
-        
+
     def _ensure_connection(self):
         """
         Ensures an active connection exists. Creates a new one if necessary.
@@ -31,11 +35,10 @@ class PostgresService:
         """
         if self._connection is None or self._connection.closed:
             self._connection = psycopg2.connect(
-                self.database_url,
-                cursor_factory=psycopg2.extras.RealDictCursor
+                self.database_url, cursor_factory=psycopg2.extras.RealDictCursor
             )
         return self._connection
-    
+
     @contextmanager
     def get_connection(self):
         """Context manager for database connections - reuses existing connection"""
@@ -51,13 +54,13 @@ class PostgresService:
             if log_svc:
                 log_svc.error(f"Database connection error: {e}", exc_info=True)
             raise
-    
+
     def close(self):
         """Manually closes the connection when necessary"""
         if self._connection and not self._connection.closed:
             self._connection.close()
             self._connection = None
-    
+
     def _count_rows_for_table(self, table_name: str) -> int:
         """Counts rows in a table, trying unquoted and quoted names.
         Returns -1 if the table does not exist in both cases.

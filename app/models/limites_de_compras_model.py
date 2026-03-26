@@ -8,9 +8,9 @@ class LimitesDeComprasModel:
     def from_dict(cls, data):
         """Converte dicionário do banco de dados em objeto do modelo.."""
         return cls(
-            id_limite_compra=data.get('id_limite_compra'),
-            id_categoria=data.get('id_categoria'),
-            limite_categoria=data.get('limite_categoria'),
+            id_limite_compra=data.get("id_limite_compra"),
+            id_categoria=data.get("id_categoria"),
+            limite_categoria=data.get("limite_categoria"),
         )
 
     def to_dict(self):

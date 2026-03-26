@@ -8,9 +8,9 @@ class CategoriasModel:
     def from_dict(cls, data):
         """Converte dicionário do banco de dados em objeto do modelo."""
         return cls(
-            id_categoria=data.get('id_categoria'),
-            nome_categoria=data.get('nome_categoria'),
-            tipo=data.get('tipo'),
+            id_categoria=data.get("id_categoria"),
+            nome_categoria=data.get("nome_categoria"),
+            tipo=data.get("tipo"),
         )
 
     def to_dict(self):

@@ -1,9 +1,10 @@
 from flask import Flask
+
 from app.api.financial_agent_endpoint import financial_agent_bp
 
-#TODO: Create a tool that returns purchases by category from the card
+# TODO: Create a tool that returns purchases by category from the card
 
-#TODO: Create a tool that searches for card purchases by establishment
+# TODO: Create a tool that searches for card purchases by establishment
 # to answer questions like "How much did I spend at supermarket X this month?"
 
 app = Flask(__name__)
