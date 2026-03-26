@@ -1,44 +1,47 @@
-from typing import Dict
-import psycopg2
-import psycopg2.extras 
-from contextlib import contextmanager
 import os
+from contextlib import contextmanager
+from typing import Dict
+
+import psycopg2
+import psycopg2.extras
 from dotenv import load_dotenv
 
-# Carregar variáveis de ambiente
+# Load environment variables
 load_dotenv()
 
-# Import lazy para evitar dependência circular
+
+# Lazy import to avoid circular dependency
 def get_log_service():
     try:
         from app.services.logs_service import log_service
+
         return log_service
     except ImportError:
-        # Fallback para não quebrar durante inicialização
+        # Fallback to not break during initialization
         return None
 
+
 class PostgresService:
-    """Serviço para interações com PostgreSQL seguindo o modelo ConfigAccountModel"""
-    
+    """Service for PostgreSQL interactions following the ConfigAccountModel"""
+
     def __init__(self):
         self.database_url = os.getenv("DATABASE_URL")
         self._connection = None
-        
+
     def _ensure_connection(self):
         """
-        Garante que existe uma conexão ativa. Cria uma nova se necessário.
-        Usa RealDictCursor para retornar resultados como dicionários.
+        Ensures an active connection exists. Creates a new one if necessary.
+        Uses RealDictCursor to return results as dictionaries.
         """
         if self._connection is None or self._connection.closed:
             self._connection = psycopg2.connect(
-                self.database_url,
-                cursor_factory=psycopg2.extras.RealDictCursor
+                self.database_url, cursor_factory=psycopg2.extras.RealDictCursor
             )
         return self._connection
-    
+
     @contextmanager
     def get_connection(self):
-        """Context manager para conexões com o banco - reutiliza conexão existente"""
+        """Context manager for database connections - reuses existing connection"""
         conn = None
         try:
             conn = self._ensure_connection()
@@ -49,29 +52,29 @@ class PostgresService:
                 conn.rollback()
             log_svc = get_log_service()
             if log_svc:
-                log_svc.error(f"Erro na conexão com o banco: {e}", exc_info=True)
+                log_svc.error(f"Database connection error: {e}", exc_info=True)
             raise
-    
+
     def close(self):
-        """Fecha a conexão manualmente quando necessário"""
+        """Manually closes the connection when necessary"""
         if self._connection and not self._connection.closed:
             self._connection.close()
             self._connection = None
-    
+
     def _count_rows_for_table(self, table_name: str) -> int:
-        """Conta linhas em uma tabela, tentando nomes não-aspados e aspados.
-        Retorna -1 se a tabela não existir em ambos os casos.
+        """Counts rows in a table, trying unquoted and quoted names.
+        Returns -1 if the table does not exist in both cases.
         """
         with self.get_connection() as conn:
             with conn.cursor() as cur:
-                # Primeiro tenta sem aspas (tabelas criadas sem aspas viram minúsculas)
+                # First try without quotes (tables created without quotes become lowercase)
                 try:
                     cur.execute(f"SELECT COUNT(*) AS c FROM {table_name}")
                     row = cur.fetchone()
                     return int(row["c"]) if isinstance(row, dict) else int(row[0])
                 except Exception:
                     pass
-                # Depois tenta com aspas e nome conforme recebido
+                # Then try with quotes and name as received
                 try:
                     cur.execute(f'SELECT COUNT(*) AS c FROM "{table_name}"')
                     row = cur.fetchone()
@@ -80,7 +83,7 @@ class PostgresService:
                     return -1
 
     def check_required_tables_status(self) -> Dict[str, int]:
-        """Verifica o status das tabelas obrigatórias do sistema."""
+        """Checks the status of required system tables."""
         required_tables = [
             "bancos",
             "cartoes_de_credito",
@@ -95,7 +98,7 @@ class PostgresService:
                 count = self._count_rows_for_table(t)
                 status[t] = count
         except Exception:
-            # Em caso de falha geral de conexão, marque todas como -1 (indefinido/não acessível)
+            # In case of general connection failure, mark all as -1 (undefined/inaccessible)
             for t in required_tables:
                 status[t] = -1
         return status

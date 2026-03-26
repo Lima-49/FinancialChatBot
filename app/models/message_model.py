@@ -1,5 +1,6 @@
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import AIMessage, HumanMessage
 from pydantic import BaseModel
+
 
 def convert_history(history):
     messages = []
@@ -9,6 +10,7 @@ def convert_history(history):
         elif m.role == "bot":
             messages.append(AIMessage(content=m.content))
     return messages
+
 
 class Message(BaseModel):
     role: str
