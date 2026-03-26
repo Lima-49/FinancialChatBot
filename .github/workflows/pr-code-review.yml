@@ -98,8 +98,8 @@ jobs:
           done
 
           {
-            echo "summary<<'EOF'"
-            echo "$summary"
+            echo "summary<<EOF"
+            echo -e "$summary"
             echo "EOF"
           } >> $GITHUB_OUTPUT
           echo "fail=$fail" >> $GITHUB_OUTPUT
