@@ -51,7 +51,7 @@ def bot():
         )
 
         # Processa a mensagem com o agente
-        result = research_service.run(incoming_msg, formatted_history)
+        result = research_service.run(incoming_msg, formatted_history, phone_number)
 
         if not result:
             msg.body(

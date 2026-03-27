@@ -65,3 +65,21 @@ research_prompt = """
         CRITICAL: Your entire response MUST be valid JSON matching this format:
         {format_instructions}
 """
+
+dynamic_query_prompt= """
+    Based on the database schema below and the user input, determine if the query is a SELECT (query) or modification (INSERT/UPDATE/DELETE).
+
+    If it is SELECT, generate the SQL query and execute it directly, returning the result.
+
+    If it is modification, generate the SQL query, describe the action in simple natural language that the user understands, and ask for confirmation. Do not execute the query yet.
+
+    {db_schema}
+
+    User input: {user_input}
+
+    Respond in JSON format:
+    {{
+        "type": "select" | "insert" | "update" | "delete",
+        "query": "the generated SQL query",
+        "description": "description in Portuguese of what the query does"
+    }}"""
