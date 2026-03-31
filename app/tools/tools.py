@@ -9,10 +9,9 @@ from app.core.config import get_site_config_url
 from app.services.cartoes_service import CartoesService
 from app.services.categorias_service import CategoriasService
 from app.services.compras_cartao_service import ComprasCartaoService
+from app.services.dynamic_query_generator_service import DynamicQueryGeneratorService
 from app.services.postgres_service import PostgresService
-from app.services.opena_ai_service import OpenAIService
 
-from app.models.dynamic_query_response_model import DynamicQueryResponse
 from app.tools.dynamic_query_context import DynamicQueryContext
 from app.core.prompts import dynamic_query_prompt
 
@@ -21,6 +20,7 @@ from app.core.prompts import dynamic_query_prompt
 pending_purchases: Dict[str, Dict[str, Any]] = {}
 
 query_context = DynamicQueryContext()
+dynamic_query_generator = DynamicQueryGeneratorService()
 
 def get_current_datetime(_: str = "") -> str:
     """Retorna data e horário atual."""
@@ -424,14 +424,13 @@ def dynamic_query_tool(user_input: str) -> str:
 
     db_schema = get_db_schema()
     prompt = dynamic_query_prompt.format(db_schema=db_schema, user_input=user_input)
-    response_model = DynamicQueryResponse()
-    llm = OpenAIService(prompt, response_model)
-
     try:
-        response = llm.run(query=prompt, chat_history=[], phone_number=phone_number)
-        query = response.get("query")
-        description = response.get("description", "Ação gerada")
-        query_type = response.get("type", "select")
+        response = dynamic_query_generator.generate(prompt)
+        if not response:
+            return "Erro ao gerar a query dinâmica."
+        query = response.query
+        description = response.description
+        query_type = response.type
 
         if query_type == "select":
             # Executar query diretamente

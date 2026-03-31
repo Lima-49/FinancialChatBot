@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -11,6 +11,8 @@ class DynamicQueryRequest(BaseModel):
 
 
 class DynamicQueryResponse(BaseModel):
-    type: str = Field(default="select" | "insert" | "update" | "delete", description="Tipo da query")
+    type: Literal["select", "insert", "update", "delete"] = Field(
+        default="select", description="Tipo da query"
+    )
     query: str = Field(..., description="the generated SQL query")
     description: str = Field(..., description="description in Portuguese of what the query does")

@@ -1,17 +1,18 @@
+"""
+Financial agent endpoint.
+"""
 from flask import Blueprint, request
 from twilio.twiml.messaging_response import MessagingResponse
 
 from app.core.config import log_error_to_file
-from app.core.prompts import research_prompt
+from app.factories.agent_factory import build_research_service
 from app.models.message_model import convert_history
-from app.models.research_model import ResearchResponse
 from app.services.conversation_history_service import ConversationHistoryService
-from app.services.opena_ai_service import OpenAIService
 
 financial_agent_bp = Blueprint("financialAgent", __name__)
 
 # PROD
-research_service = OpenAIService(research_prompt, ResearchResponse)
+research_service = build_research_service()
 conversation_service = ConversationHistoryService()
 
 

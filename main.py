@@ -1,3 +1,6 @@
+"""
+Entry point for the application.
+"""
 from flask import Flask
 
 from app.api.financial_agent_endpoint import financial_agent_bp
