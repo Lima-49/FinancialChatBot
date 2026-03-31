@@ -1,9 +1,9 @@
-import os
 from datetime import datetime, timedelta
 from typing import List, Optional
 
 from cryptography.fernet import Fernet
 
+from app.core.config import get_encryption_key
 from app.models.historico_de_mensagens_model import (
     ConversationHistory,
     ConversationMessage,
@@ -18,15 +18,16 @@ class ConversationHistoryService:
 
     def __init__(self):
         self.db = PostgresService()
-        self.encryption_key = os.getenv("CONVERSATION_ENCRYPTION_KEY")
+        self.encryption_key = get_encryption_key().strip()
 
-        if not self.encryption_key:
+        try:
+            # Inicializa o cipher para criptografia/descriptografia
+            self.cipher = Fernet(self.encryption_key.encode())
+        except (ValueError, TypeError) as e:
             raise ValueError(
-                "CONVERSATION_ENCRYPTION_KEY não encontrada nas variáveis de ambiente"
-            )
+                "CONVERSATION_ENCRYPTION_KEY inválida. Gere uma chave Fernet válida com app.core.config.generate_encryption_key()"
+            ) from e
 
-        # Inicializa o cipher para criptografia/descriptografia
-        self.cipher = Fernet(self.encryption_key.encode())
         self.table_name = "historico_de_mensagens"
 
     def _encrypt_conteudo_mensagem(self, conteudo_mensagem: str) -> str:

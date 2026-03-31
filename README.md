@@ -26,8 +26,19 @@ This project is a financial control system with AI agent integration via WhatsAp
 ## Quick Start
 
 ### Prerequisites
-- Docker Desktop installed ([download here](https://www.docker.com/products/docker-desktop))
-- PostgreSQL CLI tools (for database operations)
+- Docker Desktop installed ([download aqui](https://www.docker.com/products/docker-desktop))
+- PostgreSQL CLI tools (para operações de banco)
+
+### Ambientes suportados
+- **Local (VSCode debug)**: app rodando localmente, DB pode estar em Docker ou local
+- **Dev (Docker Compose)**: API + DB + pgAdmin + ngrok em containers
+- **Production**: deploy em servidor/container com variáveis CI/CD
+
+### Principais variáveis de ambiente
+- `APP_ENV`: local | development | production
+- `DATABASE_URL`: postgresql://user:password@host:5432/financial_control
+- `CONVERSATION_ENCRYPTION_KEY`
+- `SITE_CONFIG_URL`
 
 ### Environment Setup
 

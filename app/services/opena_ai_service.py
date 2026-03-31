@@ -4,23 +4,9 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 
 from app.services.logs_service import log_service
-from app.tools.tools import (
-    analyze_faturas_tool,
-    balance_tool,
-    bancos_tool,
-    cartoes_tool,
-    categorias_tool,
-    compras_categoria_tool,
-    confirm_compra_tool,
-    datetime_tool,
-    entradas_tool,
-    faturas_pendentes_tool,
-    insert_compra_tool,
-    prepare_compra_tool,
-    saidas_tool,
-    welcome_tool,
-)
-from app.tools.dynamic_query_tool import dynamic_query, confirm_query, query_context
+from app.tools.tools import welcome_tool, datetime_tool
+
+from app.tools.dynamic_query_context import dynamic_query, confirm_query, query_context
 
 
 class OpenAIService:
@@ -32,18 +18,6 @@ class OpenAIService:
         self.tools = [
             datetime_tool,
             welcome_tool,
-            bancos_tool,
-            cartoes_tool,
-            faturas_pendentes_tool,
-            analyze_faturas_tool,
-            entradas_tool,
-            saidas_tool,
-            balance_tool,
-            categorias_tool,
-            compras_categoria_tool,
-            prepare_compra_tool,
-            confirm_compra_tool,
-            insert_compra_tool,
             dynamic_query,
             confirm_query,
         ]

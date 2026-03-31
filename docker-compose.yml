@@ -6,6 +6,7 @@ services:
     ports:
       - "5000:5000"
     environment:
+      - APP_ENV=development
       - DATABASE_URL=postgresql://user:password@db:5432/financial_control
       - FLASK_ENV=development
     depends_on:

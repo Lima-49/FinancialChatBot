@@ -21,6 +21,31 @@ def log_error_to_file(error):
     get_log_service().error(str(error), exc_info=True)
 
 
+# Ambiente da aplicação: local, development, production
+APP_ENV = get_env_variable("APP_ENV", "local").strip().lower()
+
+
+def is_local_environment() -> bool:
+    return APP_ENV in ("local", "development", "dev")
+
+
+def is_production_environment() -> bool:
+    return APP_ENV == "production"
+
+
+def get_database_url() -> str:
+    """Retorna a URL de conexão para o banco de dados, preferindo variável explícita."""
+    database_url = get_env_variable("DATABASE_URL")
+    if database_url:
+        return database_url
+
+    # Fallbacks de convenção (para desenvolvimento local rápido)
+    if is_local_environment():
+        return "postgresql://user:password@localhost:5432/financial_control"
+
+    raise RuntimeError("DATABASE_URL não encontrado. Defina DATABASE_URL no .env ou nas variáveis de ambiente.")
+
+
 # URL do site para configuração da conta (ex: Streamlit)
 SITE_CONFIG_URL = get_env_variable("SITE_CONFIG_URL", "https://seu-site-de-config.com")
 

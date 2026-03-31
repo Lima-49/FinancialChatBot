@@ -21,11 +21,14 @@ def get_log_service():
         return None
 
 
+from app.core.config import get_database_url
+
+
 class PostgresService:
     """Service for PostgreSQL interactions following the ConfigAccountModel"""
 
     def __init__(self):
-        self.database_url = os.getenv("DATABASE_URL")
+        self.database_url = get_database_url()
         self._connection = None
 
     def _ensure_connection(self):
@@ -34,9 +37,23 @@ class PostgresService:
         Uses RealDictCursor to return results as dictionaries.
         """
         if self._connection is None or self._connection.closed:
-            self._connection = psycopg2.connect(
-                self.database_url, cursor_factory=psycopg2.extras.RealDictCursor
-            )
+            if not self.database_url:
+                raise RuntimeError("DATABASE_URL is not configured in environment")
+
+            try:
+                self._connection = psycopg2.connect(
+                    self.database_url,
+                    cursor_factory=psycopg2.extras.RealDictCursor,
+                )
+            except Exception as e:
+                log_svc = get_log_service()
+                if log_svc:
+                    log_svc.error(
+                        f"Falha ao conectar no banco de dados ({self.database_url}): {e}",
+                        exc_info=True,
+                    )
+                raise
+
         return self._connection
 
     @contextmanager
