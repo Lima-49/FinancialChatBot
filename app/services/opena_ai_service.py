@@ -53,14 +53,15 @@ class OpenAIService:
             ResearchResponse or None in case of error
         """
         self.query_context.set_phone_number(phone_number)
-        if self.agent_execut self.agent_executor.invoke(
-                {"query": or:
-            raw_response =query, "chat_history": chat_history, "phone_number": phone_number}
+        if self.agent_executor:
+            raw_response = self.agent_executor.invoke(
+                {"query": query, "chat_history": chat_history, "phone_number": phone_number}
             )
             output_text = raw_response["output"]
         else:
             chain = self.prompt | self.llm
-            raw_response = chain.invoke({"query": query, "chat_history": chat_history})
+            raw_response = chain.invoke({"query": query, "chat_history": chat_history, "phone_number": phone_number}
+            )
             output_text = raw_response.content
         try:
             return self.parser.parse(output_text)
