@@ -1,0 +1,70 @@
+# Roadmap — perguntas do agente e melhorias
+
+## 1. Perguntas que o agente deve saber responder
+
+Marque `[x]` quando a cobertura estiver ok (dados + prompt/SQL + teste manual).
+
+### 1.1 Faturas e cartões
+
+- [ ] Qual é a minha fatura atual no cartão **{nome}**?
+- [ ] Quanto está a fatura em aberto do cartão **{nome}**?
+- [ ] Quais faturas ainda não paguei?
+- [ ] Qual cartão tem a maior fatura em aberto?
+- [ ] Quando vence a próxima fatura do cartão **{nome}**?
+
+### 1.2 Gastos por categoria
+
+- [ ] Quanto gastei na categoria **{X}**?
+- [ ] Quanto gastei com **{alimentação / transporte / …}** neste mês?
+- [ ] Quais categorias mais pesaram no cartão neste mês?
+
+### 1.3 Gasto agregado por cartão
+
+- [ ] Quanto já gastei no cartão de crédito **{X}**?
+- [ ] Quanto gastei no **{Nubank / Itaú / …}** nos últimos 30 dias?
+
+### 1.4 Viabilidade (“posso comprar?”)
+
+- [ ] Tenho saldo na conta para comprar algo de **R$ X**?
+- [ ] Se eu comprar **R$ X** no cartão **{Y}**, ainda consigo pagar? *(depende de saldo, faturas abertas, limites cadastrados)*
+- [ ] Quanto ainda posso gastar na categoria **{Z}** até o limite que cadastrei?
+
+### 1.5 Listagens e desambiguação
+
+- [ ] Quais cartões eu tenho cadastrados?
+- [ ] Quais categorias existem?
+- [ ] Lista minhas compras recentes no cartão **{X}**?
+
+---
+
+## 2. Melhorias por prioridade
+
+### [P1] Alta — impacto direto em segurança, dados ou confiabilidade
+
+1. **Modelo de dados**
+   - Incluir **limite de crédito** no cadastro do cartão, se quiser respostas do tipo “cabe no limite do cartão”.
+   - Se vários usuários usarem o **mesmo banco**, definir **isolamento** (ex.: `numero_telefone` / `user_id` nas tabelas financeiras, não só no histórico de mensagens).
+
+2. **Tools ou validação**
+   - Complementar o SQL dinâmico com **ferramentas nomeadas** (ex.: fatura por cartão, gasto por categoria) ou uma **camada que valida** SELECT antes de executar — menos erro e respostas mais previsíveis.
+
+### [P2] Média — regras de negócio e qualidade contínua
+
+1. **Parcelas**
+   - Documentar e implementar uma regra única: nas agregações, usar **valor mensal da parcela** vs **valor total da compra** (`numero_parcelas`, `parcela_atual`).
+
+2. **Testes**
+   - Bateria manual ou automática usando as perguntas da seção 1 (regressão do agente + SQL gerado).
+
+### [P3] Baixa — experiência
+
+1. **Nomes ambíguos**
+   - Fluxo explícito quando existirem vários cartões ou categorias com nome parecido (listar opções e pedir escolha).
+
+---
+
+## 3. Notas rápidas
+
+- Hoje o fluxo principal de consulta é a tool **`dynamic_query`** (schema do Postgres + SQL gerado).
+- Perguntas com “este mês” dependem de data atual → combinar com **`GetCurrentDateTime`** no raciocínio do agente.
+- Sem limite de crédito no schema, “posso comprar no cartão?” fica limitado a saldo em conta, faturas abertas e `limites_compras` por categoria.

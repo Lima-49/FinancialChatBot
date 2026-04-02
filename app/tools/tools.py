@@ -538,22 +538,11 @@ insert_compra_tool = Tool(
 dynamic_query = Tool(
     name="dynamic_query",
     description="Interpreta input do usuário e gera/executa queries SQL dinâmicas no banco de dados financeiro. Para modificações, pede confirmação antes de executar.",
-    func=dynamic_query_tool
+    func=dynamic_query_tool,
 )
 
 confirm_query = Tool(
     name="confirm_query",
     description="Confirma e executa uma query pendente de modificação no banco de dados.",
-    func=confirm_query_tool
-)
-dynamic_query = Tool(
-    name="dynamic_query",
-    description="Interpreta input do usuário e gera/executa queries SQL dinâmicas no banco de dados financeiro. Para modificações, pede confirmação antes de executar.",
-    func=dynamic_query_tool
-)
-
-confirm_query = Tool(
-    name="confirm_query",
-    description="Confirma e executa uma query pendente de modificação no banco de dados.",
-    func=confirm_query_tool
+    func=confirm_query_tool,
 )
