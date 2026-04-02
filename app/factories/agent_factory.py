@@ -1,6 +1,6 @@
 from app.core.prompts import research_prompt
 from app.models.research_model import ResearchResponse
-from app.services.openai_service import OpenAIService
+from app.services.opena_ai_service import OpenAIService
 from app.tools.tools import confirm_query, datetime_tool, dynamic_query, welcome_tool
 
 

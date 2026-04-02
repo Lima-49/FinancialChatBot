@@ -18,5 +18,4 @@ __pycache__
 # Database dumps (sensitive data)
 *.dump
 *.backup
-supabase_backup.dump
-pg_backup.dump
+*.sql
